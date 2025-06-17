@@ -1,3 +1,4 @@
+using Alaska.Data;
 using Alaska.Models;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Data;
@@ -20,10 +21,11 @@ namespace WinformApp
         private void OpenLoginDialog(object sender, EventArgs e)
         {
             LoginForm dialog = new LoginForm();
-            if (dialog.ShowDialog()==DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string username = My.Application.User != null ? My.Application.User.Name : "-";
-                this.Text = "SELAMAT DATANG " + username;
+                this.userLoginName.Text = username;
+                this.m_Hostname.Text = "Host: " + NetworkHelper.GetIPV4Address() + ":5005";
                 this.WindowState = FormWindowState.Maximized;
             }
             else
@@ -46,6 +48,20 @@ namespace WinformApp
                 CreateNoWindow = true
             });
 
+        }
+
+        private async void Logout(object sender, EventArgs e)
+        {
+            var result = await HttpClientSingleton.PostAsync("/auth/logout");
+            if (result == "true")
+            {
+                this.Close();
+            }
+        }
+
+        private async void ForceLogout(object sender, FormClosingEventArgs e)
+        {
+            await HttpClientSingleton.PostAsync("/auth/logout");
         }
     }
 }

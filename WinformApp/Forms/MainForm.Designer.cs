@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            dataGridView1 = new DataGridView();
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
@@ -59,22 +58,13 @@
             searchToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            m_StatusStrip = new StatusStrip();
+            userLoginName = new ToolStripStatusLabel();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            m_Hostname = new ToolStripStatusLabel();
             menuStrip1.SuspendLayout();
+            m_StatusStrip.SuspendLayout();
             SuspendLayout();
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.BackgroundColor = Color.White;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 25);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(800, 425);
-            dataGridView1.TabIndex = 0;
             // 
             // menuStrip1
             // 
@@ -82,7 +72,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, toolsToolStripMenuItem, pengaturanToolStripMenuItem, toolsToolStripMenuItem1, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(800, 25);
+            menuStrip1.Size = new Size(1057, 25);
             menuStrip1.TabIndex = 1;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -99,7 +89,7 @@
             newToolStripMenuItem.ImageTransparentColor = Color.Magenta;
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
-            newToolStripMenuItem.Size = new Size(155, 22);
+            newToolStripMenuItem.Size = new Size(180, 22);
             newToolStripMenuItem.Text = "&New";
             // 
             // openToolStripMenuItem
@@ -108,13 +98,13 @@
             openToolStripMenuItem.ImageTransparentColor = Color.Magenta;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            openToolStripMenuItem.Size = new Size(155, 22);
+            openToolStripMenuItem.Size = new Size(180, 22);
             openToolStripMenuItem.Text = "&Open";
             // 
             // toolStripSeparator
             // 
             toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new Size(152, 6);
+            toolStripSeparator.Size = new Size(177, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -122,25 +112,26 @@
             saveToolStripMenuItem.ImageTransparentColor = Color.Magenta;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new Size(155, 22);
+            saveToolStripMenuItem.Size = new Size(180, 22);
             saveToolStripMenuItem.Text = "&Save";
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(155, 22);
+            saveAsToolStripMenuItem.Size = new Size(180, 22);
             saveAsToolStripMenuItem.Text = "Save &As";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(152, 6);
+            toolStripSeparator2.Size = new Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(155, 22);
+            exitToolStripMenuItem.Size = new Size(180, 22);
             exitToolStripMenuItem.Text = "L&ogout";
+            exitToolStripMenuItem.Click += Logout;
             // 
             // editToolStripMenuItem
             // 
@@ -235,7 +226,7 @@
             // goToHomepageToolStripMenuItem
             // 
             goToHomepageToolStripMenuItem.Name = "goToHomepageToolStripMenuItem";
-            goToHomepageToolStripMenuItem.Size = new Size(180, 22);
+            goToHomepageToolStripMenuItem.Size = new Size(178, 22);
             goToHomepageToolStripMenuItem.Text = "Go to Homepage";
             goToHomepageToolStripMenuItem.Click += GoToHomePage;
             // 
@@ -275,27 +266,58 @@
             aboutToolStripMenuItem.Size = new Size(127, 22);
             aboutToolStripMenuItem.Text = "&About...";
             // 
+            // m_StatusStrip
+            // 
+            m_StatusStrip.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            m_StatusStrip.Items.AddRange(new ToolStripItem[] { userLoginName, toolStripStatusLabel1, m_Hostname });
+            m_StatusStrip.Location = new Point(0, 428);
+            m_StatusStrip.Name = "m_StatusStrip";
+            m_StatusStrip.Size = new Size(1057, 22);
+            m_StatusStrip.TabIndex = 3;
+            m_StatusStrip.Text = "menuStrip2";
+            // 
+            // userLoginName
+            // 
+            userLoginName.Image = Properties.Resources.icustomer;
+            userLoginName.Name = "userLoginName";
+            userLoginName.Size = new Size(147, 17);
+            userLoginName.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(857, 17);
+            toolStripStatusLabel1.Spring = true;
+            toolStripStatusLabel1.Text = "Alaska Application";
+            // 
+            // m_Hostname
+            // 
+            m_Hostname.Name = "m_Hostname";
+            m_Hostname.Size = new Size(38, 17);
+            m_Hostname.Text = "Host:";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(dataGridView1);
+            ClientSize = new Size(1057, 450);
+            Controls.Add(m_StatusStrip);
             Controls.Add(menuStrip1);
+            IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
             Text = "Form1";
+            FormClosing += ForceLogout;
             Load += OpenLoginDialog;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            m_StatusStrip.ResumeLayout(false);
+            m_StatusStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private DataGridView dataGridView1;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
@@ -325,5 +347,9 @@
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem toolsToolStripMenuItem1;
         private ToolStripMenuItem goToHomepageToolStripMenuItem;
+        private StatusStrip m_StatusStrip;
+        private ToolStripStatusLabel userLoginName;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel m_Hostname;
     }
 }

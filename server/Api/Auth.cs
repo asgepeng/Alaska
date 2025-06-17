@@ -81,7 +81,7 @@ WHERE [login] = @username AND [password] = HASHBYTES('SHA2_256', CAST(@password 
             int iUserID = AppHelpers.GetUserID(context);
             if (iUserID > 0)
             {
-                bool success = await db.ExecuteNonQueryAsync("UPDATE logins SET token = '' WHERE `user` = @userID", new SqlParameter("@userID", iUserID));
+                bool success = await db.ExecuteNonQueryAsync("DELETE FROM authentications WHERE [user] = @userID", new SqlParameter("@userID", iUserID));
                 return Results.Ok(true);
             }
             return Results.Ok(false);
