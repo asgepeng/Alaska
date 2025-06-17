@@ -1,6 +1,7 @@
 ﻿using Alaska;
 using Alaska.Data;
 using Alaska.Models;
+using System.Data;
 using System.Text.Json;
 
 namespace WinformApp.Data
@@ -40,6 +41,33 @@ namespace WinformApp.Data
         public Task<CommonResult> UpdateAsync(User model)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    internal class UserTableBuilder : DataTableBuilder
+    {
+        internal UserTableBuilder(Stream stream) : base(stream) { }
+        public override DataTable ToDataTable()
+        {
+            AddColumn("id", typeof(int));
+            AddColumn("name", typeof(string));
+            AddColumn("role", typeof(string));
+            AddColumn("createdBy", typeof(string));
+            AddColumn("createdDate", typeof(DateTime));
+
+            while (Read())
+            {
+                var values = new object[]
+                {
+                    ReadInt32(),
+                    ReadString(),
+                    ReadString(),
+                    ReadString(),
+                    ReadDateTime()
+                };
+                AddRow(values);
+            }
+            return base.ToDataTable();
         }
     }
 }

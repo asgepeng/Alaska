@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using server.Api;
+using server.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton(db => new DbClient());
 builder.Services.AddScoped<TokenValidator>();
+
 builder.Services.AddAuthentication("Bearer")
      .AddJwtBearer(options =>
      {
@@ -31,14 +33,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 
-builder.Services.AddRazorPages();
 builder.Services.AddWindowsService();
 builder.Services.AddHostedService<AlaskaServer>();
 
 var app = builder.Build();
 
-app.MapRazorPages();
 app.MapAuthentications();
 app.MapUserEndPoint();
 app.MapOutletEndPoint();
+
+app.MapHomeEndPoint();
+
 app.Run();
