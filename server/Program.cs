@@ -1,0 +1,44 @@
+using Alaska;
+using Alaska.Api;
+using Alaska.Data;
+using Alaska.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting.WindowsServices;
+using server.Api;
+
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton(db => new DbClient());
+builder.Services.AddScoped<TokenValidator>();
+builder.Services.AddAuthentication("Bearer")
+     .AddJwtBearer(options =>
+     {
+         options.Events = new JwtBearerEvents
+         {
+             OnMessageReceived = async context =>
+             {
+                 var tokenValidator = context.HttpContext.RequestServices.GetRequiredService<TokenValidator>();
+                 await tokenValidator.ValidateAsync(context);
+                 await Task.CompletedTask;
+             }
+         };
+     });
+builder.Services.AddAuthorization();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
+
+builder.Services.AddRazorPages();
+builder.Services.AddWindowsService();
+builder.Services.AddHostedService<AlaskaServer>();
+
+var app = builder.Build();
+
+app.MapRazorPages();
+app.MapAuthentications();
+app.MapUserEndPoint();
+app.MapOutletEndPoint();
+app.Run();

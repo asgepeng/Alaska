@@ -1,0 +1,33 @@
+CREATE TABLE roles
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[name] VARCHAR(50) NOT NULL CONSTRAINT df_role_name DEFAULT(''),
+	[createdBy] INT NOT NULL CONSTRAINT df_role_createdBy DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_role_createdDate DEFAULT(GETDATE()),
+	[editedBy] INT NULL,
+	[editedDate] DATETIME NULL,
+	CONSTRAINT pk_roles PRIMARY KEY CLUSTERED (id)
+);
+CREATE TABLE users
+(
+	id INT IDENTITY(1,1) NOT NULL,
+	[name] VARCHAR(50) NOT NULL CONSTRAINT df_user_name DEFAULT (''),
+	[role] INT NOT NULL CONSTRAINT df_user_role DEFAULT(0),
+	[login] VARCHAR(50) NOT NULL CONSTRAINT df_user_login DEFAULT (''),
+	[password] BINARY(32) NOT NULL CONSTRAINT df_user_password DEFAULT (0x0),
+	[createdBy] INT NOT NULL CONSTRAINT df_user_createdBy DEFAULT(0),
+	[createdAt] DATETIME NOT NULL CONSTRAINT df_user_createdAt DEFAULT(GETDATE()),
+	[editedBy] INT NULL,
+	[editedAt] DATETIME NULL,
+	[deleted] BIT NOT NULL CONSTRAINT df_user_deleted DEFAULT(0),
+	CONSTRAINT pk_users PRIMARY KEY CLUSTERED (id)
+);
+CREATE TABLE authentications
+(
+	[token] UNIQUEIDENTIFIER NOT NULL,
+	[user] INT NOT NULL CONSTRAINT df_authentication_user DEFAULT(0),
+	[expired] INT NOT NULL CONSTRAINT df_authentication_expired DEFAULT(0),
+	CONSTRAINT pk_authentications PRIMARY KEY ([token])
+);
+INSERT INTO users ([name], [login], [password], [createdBy], [createdAt])
+VALUES ('Administrator', 'admin', HASHBYTES('SHA2_256', CAST('Power123...' AS nvarchar)), 0, GETDATE());
