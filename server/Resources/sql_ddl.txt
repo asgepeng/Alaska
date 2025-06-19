@@ -31,3 +31,31 @@ CREATE TABLE authentications
 );
 INSERT INTO users ([name], [login], [password], [createdBy], [createdAt])
 VALUES ('Administrator', 'admin', HASHBYTES('SHA2_256', CAST('Power123...' AS nvarchar)), 0, GETDATE());
+CREATE TABLE waiters
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[name] VARCHAR(100) NOT NULL CONSTRAINT df_waiter_name DEFAULT(''),
+	[streetAddress] VARCHAR(250) NOT NULL CONSTRAINT df_waiter_address DEFAULT(''),
+	[phone] VARCHAR(50) NOT NULL CONSTRAINT df_waiter_phone DEFAULT(''),
+	[email] VARCHAR(80) NOT NULL CONSTRAINT df_waiter_email DEFAULT(''),
+	[password] BINARY(32) NOT NULL CONSTRAINT df_waiter_password DEFAULT(0x0),
+	[createdBy] INT NOT NULL CONSTRAINT df_waiter_createdBy DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_waiter_createdDate DEFAULT(GETDATE()),
+	[editedBy] INT NULL,
+	[editedDate] DATETIME NULL,
+	[deleted] BIT NOT NULL CONSTRAINT df_waiter_deleted DEFAULT(0),
+	CONSTRAINT pk_waiters PRIMARY KEY CLUSTERED (id)
+);
+CREATE TABLE outlets
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[name] VARCHAR(50) NOT NULL CONSTRAINT df_outlet_name DEFAULT(''),
+	[streetAddress] VARCHAR(250) NOT NULL CONSTRAINT df_outlet_streetAddress DEFAULT(''),
+	[waiterId] INT NOT NULL CONSTRAINT df_outlet_waiterId DEFAULT(0),
+	[createdBy] INT NOT NULL CONSTRAINT df_outlet_createdBy DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_outlet_createdDate DEFAULT(GETDATE()),
+	[editedBy] INT NULL,
+	[editedDate] DATETIME NULL,
+	[deleted] BIT NOT NULL CONSTRAINT df_outlet_deleted DEFAULT(0),
+	CONSTRAINT pk_outlets PRIMARY KEY CLUSTERED (id)
+);

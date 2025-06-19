@@ -38,6 +38,7 @@ builder.Services.AddHostedService<AlaskaServer>();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
 app.MapAuthentications();
 app.MapUserEndPoint();
 app.MapOutletEndPoint();

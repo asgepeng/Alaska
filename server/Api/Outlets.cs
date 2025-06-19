@@ -1,4 +1,5 @@
 ﻿using Alaska.Data;
+using Alaska.Models;
 using AlaskaLib.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -24,22 +25,34 @@ namespace server.Api
         internal static async Task<IResult> GetAllAsync(HttpContext context, DbClient db)
         {
             var list = new List<Outlet>();
-            string commandText = "SELECT [id], [name], [location] FROM outlets WHERE deleted = 0";
-            await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
+            string commandText = """
+                SELECT o.id, o.[name], o.[streetAddress] AS [location], w.[name] AS waiter, u.[name] AS createdBy, o.[createdDate]
+                FROM outlets AS o
+                INNER JOIN waiters AS w ON o.waiterId = w.id
+                INNER JOIN users AS u ON w.createdBy = u.id
+                WHERE o.deleted = 0
+                """;
+            byte[] data = Array.Empty<byte>();
+            using (var builder = new BinaryBuilder())
             {
-                if (reader != null)
+                await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
                 {
-                    while (await reader.ReadAsync())
+                    if (reader != null)
                     {
-                        list.Add(new Outlet()
+                        while (await reader.ReadAsync())
                         {
-                            Id = reader.GetInt32(0),
-                            Name = reader.GetString(1)
-                        });
+                            builder.WriteInt32(reader.GetInt32(0));
+                            builder.WriteString(reader.GetString(1));
+                            builder.WriteString(reader.GetString(2));
+                            builder.WriteString(reader.GetString(3));
+                            builder.WriteString(reader.GetString(4));
+                            builder.WriteDateTime(reader.GetDateTime(5));
+                        }
+                        data = builder.ToArray();
                     }
-                }
-            }, commandText);
-            return Results.Ok(list);
+                }, commandText);
+            }
+            return Results.File(data, "application/octet-stream");
         }
         internal static async Task<IResult> GetByIdAsync(HttpContext context, DbClient db, int id)
         {

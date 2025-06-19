@@ -3,6 +3,7 @@ using Alaska.Models;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Data;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using WinformApp.Data;
 using WinformApp.Forms;
 
@@ -61,7 +62,43 @@ namespace WinformApp
 
         private async void ForceLogout(object sender, FormClosingEventArgs e)
         {
-            await HttpClientSingleton.PostAsync("/auth/logout");
+            if (My.Application.ApiUrl != "") await HttpClientSingleton.PostAsync("/auth/logout");
+        }
+
+        private void PublishHomePage(object sender, EventArgs e)
+        {
+            Process.Start("cloudflared", "tunnel --url http://localhost:5005 --no-autoupdate");
+        }
+
+        private void OpenRoleManagementForm(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OpenOutletForm(object sender, EventArgs e)
+        {
+            var form = new OutletForm();
+            form.MdiParent = this;
+            form.Show();
+            form.WindowState = FormWindowState.Maximized;
+        }
+
+        private void OpenWaiterForm(object sender, EventArgs e)
+        {
+            var form = new WaiterForm();
+            form.MdiParent = this;
+            form.Show();
+            form.WindowState = FormWindowState.Maximized;
+        }
+
+        private void OpenExpenseCategoryForm(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OpenProductForm(object sender, EventArgs e)
+        {
+
         }
     }
 }

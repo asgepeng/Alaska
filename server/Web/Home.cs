@@ -20,9 +20,9 @@ namespace server.Web
 <html lang=""en"">
 <head>
     <meta charset=""utf-8"" />
-    <title>@ViewData[""Title""] - Alaska</title>
+    <title>Alaska Tea & Cohocolate</title>
     <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
-    <link href=""https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"" rel=""stylesheet"" />
+    <link href=""/css/bootstrap.min.css"" rel=""stylesheet"" />
     <style>
         body {
             padding-top: 60px;
@@ -58,7 +58,7 @@ namespace server.Web
 <div class=""text-center mt-5"">
     <h1 class=""display-4 fw-bold"">Welcome to Alaska</h1>
     <p class=""lead"">Crafted delicately with the finest tea leaves and rich chocolate blends.</p>
-    <img src=""https://images.unsplash.com/photo-1612197870606-8cdd79de71c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1050&q=80"" class=""img-fluid rounded shadow mt-4"" alt=""Alaska Tea & Chocolate"" style=""max-height: 400px;"">
+    <img src=""/images/ps3.png"" class=""img-fluid rounded shadow mt-4"" alt=""Alaska Tea & Chocolate"" style=""max-height: 400px;"">
 </div>
 
 <section class=""mt-5"">
@@ -76,7 +76,7 @@ namespace server.Web
             </p>
         </div>
         <div class=""col-md-6"">
-            <img src=""https://images.unsplash.com/photo-1586201375761-83865001e17c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1050&q=80""
+            <img src=""/images/chocolate.jpeg""
                  class=""img-fluid rounded shadow"" alt=""Cozy Tea & Chocolate"" />
         </div>
     </div>
@@ -94,7 +94,7 @@ namespace server.Web
         </div>
     </footer>
 
-    <script src=""https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js""></script>
+    <script src=""/js/bootstrap.bundle.min.js""></script>
 </body>
 </html>";
             return Results.Content(html, "text/html", Encoding.UTF8);

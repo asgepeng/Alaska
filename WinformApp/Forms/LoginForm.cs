@@ -23,16 +23,34 @@ namespace WinformApp
         {
             this.usernameTextBox.Enabled = false;
             this.passwordTextBox.Enabled = false;
-            this.button1.Enabled = false;
+            this.loginButton.Enabled = false;
+            this.Cursor = Cursors.WaitCursor;
         }
         private void EnableControl()
         {
+            this.Cursor = Cursors.WaitCursor;
             this.usernameTextBox.Enabled = true;
             this.passwordTextBox.Enabled = true;
-            this.button1.Enabled = true;
+            this.loginButton.Enabled = true;
         }
         private async void TryLogin(object sender, EventArgs e)
         {
+            if (this.usernameTextBox.Text.Trim() == "")
+            {
+                MessageBox.Show("Username tidak boleh kosong", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                usernameTextBox.Focus();
+                return;
+            }
+            if (this.usernameTextBox.Focused)
+            {
+                this.passwordTextBox.Focus();
+                return;
+            }
+            if (this.usernameTextBox.Text == "")
+            {
+                MessageBox.Show("Password tidak boleh kosong", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                passwordTextBox.Focus();
+            }
             this.DisableControl();
             if (await HttpClientSingleton.SignInAsync(this.usernameTextBox.Text.Trim(), this.passwordTextBox.Text))
             {
@@ -43,6 +61,14 @@ namespace WinformApp
             {
                 MessageBox.Show("Username atau password yang diinput tidak valid", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.EnableControl();
+            }
+        }
+
+        private void OnKeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                loginButton.PerformClick();
             }
         }
     }
