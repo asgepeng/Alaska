@@ -143,8 +143,10 @@ namespace Alaska.Data
                         handler(reader);
                     }
                 }
-                catch
-                { }
+                catch (Exception ex)
+                {
+                    File.AppendAllText("E:\\Alaska\\bin\\error.log", ex.ToString());
+                }
                 finally
                 {
                     await conn.CloseAsync();

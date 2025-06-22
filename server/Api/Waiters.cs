@@ -15,15 +15,14 @@ namespace server.Api
             app.MapGet("/master-data/waiters/{id}", GetByIdAsync).RequireAuthorization();
             app.MapPost("/master-data/waiters", CreateAsync).RequireAuthorization();
             app.MapPut("/master-data/waiters", UpdateAsync).RequireAuthorization();
-            app.MapDelete("/master-data/waiters", DeleteAsync).RequireAuthorization();
+            app.MapDelete("/master-data/waiters/{id}", DeleteAsync).RequireAuthorization();
         }
         internal static async Task<IResult> GetAllAsync(DbClient db)
         {
             var commandText = """
-                        SELECT w.id, w.[name], a.streetAddress, p.number, u.[name] AS createdBy, w.dateCreated
+                        SELECT w.[id], w.[name], w.[streetAddress], w.[phone], u.[name] AS createdBy, w.createdDate
                         FROM waiters AS w
-                        LEFT JOIN addresses AS a ON w.id = a.waiter AND w.isPrimary = 1
-                        LEFT JOIN phones AS p ON w.id = p.waiter AND p.isPrimary = 1
+                        INNER JOIN users AS u ON w.createdBy = u.id
                         WHERE w.deleted = 0
                         """;
             byte[] data = Array.Empty<byte>();
@@ -79,7 +78,8 @@ namespace server.Api
             var userID = AppHelpers.GetUserID(context);
             var commandText = """
                 INSERT INTO waiters ([name], [streetAddress], [phone], [email], [createdBy])
-                VALUES (@name, @streetAddress, @phone, @email, @author)
+                VALUES (@name, @streetAddress, @phone, @email, @author);
+                SELECT SCOPE_IDENTITY()
                 """;
             var parameters = new SqlParameter[]
             {
@@ -107,13 +107,14 @@ namespace server.Api
                 new SqlParameter("@streetAddress", model.StreetAddress),
                 new SqlParameter("@phone", model.Phone),
                 new SqlParameter("@email", model.Email),
-                new SqlParameter("@author", userID)
+                new SqlParameter("@author", userID),
+                new SqlParameter("@id", model.Id)
             };
             if (await db.ExecuteNonQueryAsync(commandText, parameters))
             {
-                return Results.Ok();
+                return Results.Ok(new CommonResult() { Success = true, Message = "Sukses memperbarui data waiter" });
             }
-            return Results.Problem();
+            return Results.Ok(new CommonResult() { Success = false, Message = "Gagal memperbarui data waiter" });
         }
         internal static async Task<IResult> DeleteAsync(int id, DbClient db, HttpContext context)
         {
@@ -121,8 +122,11 @@ namespace server.Api
                 UPDATE waiters SET deleted = 1
                 WHERE id = @id
                 """;
-            var result = await db.ExecuteNonQueryAsync(commandText, new SqlParameter("@id", id));
-            return Results.Ok(result);
+            if (await db.ExecuteNonQueryAsync(commandText, new SqlParameter("@id", id)))
+            {
+                return Results.Ok(new CommonResult() { Success = true, Message = "Berhasil menghapus record dari database" });
+            }
+            return Results.Ok(new CommonResult() { Success = false, Message = "Gagal menghapus record dari database" });
         }
     }
 }

@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace WinformApp.Forms
 {
-    public partial class WaiterForm : Form
+    public partial class IncomeDetailForm : Form
     {
-        public WaiterForm()
+        public IncomeDetailForm()
         {
             InitializeComponent();
         }

@@ -80,6 +80,85 @@ namespace WinformApp
 
             return url;
         }
-    }    
+    }
+
+    public static class FormatHelpers
+    {
+        public static string LPAD(string value, int maxlength, char fillwith = ' ')
+        {
+            value = value.Trim();
+            if (value.Length >= maxlength)
+            {
+                return value.Substring(0, maxlength);
+            }
+
+            string pad = "";
+            int clength = maxlength - value.Length;
+            for (int i = 0; i < clength; i++)
+            {
+                pad += fillwith;
+            }
+            return string.Concat(pad, value);
+        }
+        public static string RPAD(string value, int maxlength)
+        {
+            value = value.Trim();
+            if (value.Length >= maxlength)
+            {
+                return value.Substring(0, maxlength);
+            }
+
+            string pad = "";
+            int clength = maxlength - value.Length;
+            for (int i = 0; i < clength; i++)
+            {
+                pad += " ";
+            }
+            return string.Concat(value, pad);
+        }
+        public static void FilterOnlyNumber(KeyPressEventArgs e)
+        {
+            var code = Convert.ToInt32(e.KeyChar);
+            if (!(code >= 48 && code <= 57) && code != 8)
+            {
+                e.Handled = true;
+            }
+        }
+        public static decimal GetDecimal(string value)
+        {
+            return decimal.TryParse(value, out decimal outValue) ? outValue : 0;
+        }
+        public static void FilterOnlyAlphaNumericValue(KeyPressEventArgs e)
+        {
+            var code = Convert.ToInt32(e.KeyChar);
+            if (!(code >= 65 && code <= 90) && !(code >= 97 && code <= 122) && code != 8 && code != 32 && !(code >= 48 && code <= 57))
+            {
+                e.Handled = true;
+            }
+        }
+        public static byte[] ImageToByteArray(Image image)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                return ms.ToArray();
+            }
+        }
+        public static bool IsValidEmail(string email)
+        {
+            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, pattern);
+        }
+        public static void ConvertToNumber(TextBox tb)
+        {
+            tb.Text = tb.Text.Replace(",", "").Replace(".", "");
+        }
+        public static decimal RollBackToDecimal(TextBox tb)
+        {
+            var dec = decimal.TryParse(tb.Text, out decimal value) ? value : 0;
+            tb.Text = dec.ToString("N0");
+            return dec;
+        }
+    }
 }
 

@@ -1,6 +1,6 @@
 ﻿namespace WinformApp.Forms
 {
-    partial class WaiterForm
+    partial class CategoryForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,38 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dataGridView1 = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
-            // dataGridView1
-            // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.BackgroundColor = Color.White;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(763, 400);
-            dataGridView1.TabIndex = 3;
-            // 
-            // WaiterForm
+            // CategoryForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(763, 400);
-            Controls.Add(dataGridView1);
+            ClientSize = new Size(323, 510);
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Name = "WaiterForm";
-            Text = "WaiterForm";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "CategoryForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Kategori Produk";
             ResumeLayout(false);
         }
 
         #endregion
-
-        private DataGridView dataGridView1;
     }
 }

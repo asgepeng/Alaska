@@ -6,41 +6,47 @@ using System.Text.Json;
 
 namespace WinformApp.Data
 {
-    internal interface IService<T> where T : class
+    internal interface IService
     {
-        Task<Stream> GetDataDataTable();
+        Task<DataTable> GetDataDataTableAsync();
         Task<object?> GetByIdAsync(int id);
-        Task<T?> CreateAsync(T model);
-        Task<CommonResult> UpdateAsync(T model);
+        Task<object?> CreateAsync(object model);
+        Task<CommonResult> UpdateAsync(object model);
         Task<CommonResult> DeleteAsync(int id);
     }
-    internal class UserService : IService<User>
+    internal class UserService
     {
-        public Task<User?> CreateAsync(User model)
+        public async Task<bool> CreateAsync(User model)
         {
-            throw new NotImplementedException();
+            var json = await HttpClientSingleton.PostAsync("/user-manager", JsonSerializer.Serialize(model, AppJsonSerializerContext.Default.User));
+            MessageBox.Show(json);
+            return json.Trim() == "true";
         }
 
-        public Task<CommonResult> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var json = await HttpClientSingleton.DeleteAsync("/user-manager/" + id.ToString());
+            return json.Trim() == "true";
         }
 
         public async Task<object?> GetByIdAsync(int id)
         {
-            var json = await HttpClientSingleton.Instance.GetStringAsync("/user-manager/" + id.ToString());
+            var json = await HttpClientSingleton.GetAsync("/user-manager/" + id.ToString());
             var user = json.Length > 0 ? JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.UserViewModel) : null;
             return user;
         }
 
-        public async Task<Stream> GetDataDataTable()
+        public async Task<DataTable> GetDataDataTableAsync()
         {
-            return await HttpClientSingleton.GetStreamAsync("/user-manager/");
+            using (var builder = new UserTableBuilder(await HttpClientSingleton.GetStreamAsync("/user-manager/")))
+            {
+                return builder.ToDataTable();
+            }
         }
-
-        public Task<CommonResult> UpdateAsync(User model)
+        public async Task<bool> UpdateAsync(User model)
         {
-            throw new NotImplementedException();
+            var json = await HttpClientSingleton.PutAsync("/user-manager", JsonSerializer.Serialize(model, AppJsonSerializerContext.Default.User));
+            return json.Trim() == "true";
         }
     }
 

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Alaska.Models;
+using AlaskaLib.Models;
 using WinformApp;
 
 namespace Alaska
@@ -19,6 +20,10 @@ namespace Alaska
         }
     }
 
+    [JsonSerializable(typeof(OutletViewModel))]
+    [JsonSerializable(typeof(Outlet))]
+    [JsonSerializable(typeof(DropdownOption))]
+    [JsonSerializable(typeof(Waiter))]
     [JsonSerializable(typeof(UserViewModel))]
     [JsonSerializable(typeof(Record))]
     [JsonSerializable(typeof(LoginRequest))]
@@ -28,7 +33,7 @@ namespace Alaska
     [JsonSerializable(typeof(ProductCategory))]
     [JsonSerializable(typeof(List<ProductCategory>))]
     [JsonSerializable(typeof(StockInfo))]
-    [JsonSerializable(typeof(ProductModel))]
+    [JsonSerializable(typeof(ProductViewModel))]
     [JsonSerializable(typeof(Customer))]
     [JsonSerializable(typeof(List<CustomerModel>))]
     [JsonSerializable(typeof(List<CustomerGroup>))]

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Alaska.Models;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Alaska.Api
 {
@@ -43,7 +44,8 @@ namespace Alaska.Api
 
             string sql = @"SELECT [id], [name], [role]
 FROM users
-WHERE [login] = @username AND [password] = HASHBYTES('SHA2_256', CAST(@password AS NVARCHAR))";
+WHERE [login] = @username AND [password] = HASHBYTES('SHA2_256', CAST(@password AS NVARCHAR))
+AND deleted = 0";
             SqlParameter[] parameters = new SqlParameter[2];
             parameters[0] = new SqlParameter("@username", request.Username);
             parameters[1] = new SqlParameter("@password", request.Password);
@@ -78,10 +80,21 @@ WHERE [login] = @username AND [password] = HASHBYTES('SHA2_256', CAST(@password 
         }
         private static async Task<IResult> LogoutAsync(HttpContext context, DbClient db)
         {
+            var token = context.Request.Headers["Authorization"].ToString().Split(' ').Last();
+            var tokenParam = new SqlParameter("@token", SqlDbType.UniqueIdentifier);
+            if (Guid.TryParse(token, out Guid tokenGuid))
+            {
+                tokenParam.Value = tokenGuid;
+            }
+            else
+            {
+                tokenParam.Value = DBNull.Value;
+            }
+
             int iUserID = AppHelpers.GetUserID(context);
             if (iUserID > 0)
             {
-                bool success = await db.ExecuteNonQueryAsync("DELETE FROM authentications WHERE [user] = @userID", new SqlParameter("@userID", iUserID));
+                bool success = await db.ExecuteNonQueryAsync("DELETE FROM authentications WHERE [token] = @token", tokenParam);
                 return Results.Ok(true);
             }
             return Results.Ok(false);

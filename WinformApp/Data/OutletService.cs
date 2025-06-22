@@ -7,33 +7,42 @@ using System.Text.Json;
 
 namespace WinformApp.Data
 {
-    internal class OutletService : IService<Outlet>
+    internal class OutletService : IService
     {
-        public Task<Outlet?> CreateAsync(Outlet model)
+        public async Task<object?> CreateAsync(object model)
         {
-            throw new NotImplementedException();
+            Outlet outlet = (Outlet)model;
+            var json = await HttpClientSingleton.PostAsync("/master-data/outlets/", JsonSerializer.Serialize(outlet, AppJsonSerializerContext.Default.Outlet));
+            return json.Length > 0 ? JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.Outlet) : null;
         }
 
-        public Task<CommonResult> DeleteAsync(int id)
+        public async Task<CommonResult> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var json = await HttpClientSingleton.DeleteAsync("/master-data/outlets/" + id.ToString());
+            var cr = json.Length > 0 ? JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.CommonResult) : new CommonResult() { Success = false };
+            return cr is null ? new CommonResult() { Success = false } : cr;
         }
 
         public async Task<object?> GetByIdAsync(int id)
         {
-            var json = await HttpClientSingleton.Instance.GetStringAsync("/user-manager/" + id.ToString());
-            var user = json.Length > 0 ? JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.UserViewModel) : null;
-            return user;
+            var json = await HttpClientSingleton.GetAsync("/master-data/outlets/" + id.ToString());
+            var ovm = json.Length > 0 ? JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.OutletViewModel) : null;
+            return ovm;
         }
 
-        public async Task<Stream> GetDataDataTable()
+        public async Task<DataTable> GetDataDataTableAsync()
         {
-            return await HttpClientSingleton.GetStreamAsync("/master-data/outlets/");
+            using (var builder = new OutletTableBuilder(await HttpClientSingleton.GetStreamAsync("/master-data/outlets/")))
+            {
+                return builder.ToDataTable();
+            }
         }
 
-        public Task<CommonResult> UpdateAsync(Outlet model)
+        public async Task<CommonResult> UpdateAsync(object model)
         {
-            throw new NotImplementedException();
+            var json = await HttpClientSingleton.PutAsync("/master-data/outlets", JsonSerializer.Serialize((Outlet)model, AppJsonSerializerContext.Default.Outlet));
+            var cr = json.Length > 0 ? JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.CommonResult) : new CommonResult() { Success = false };
+            return cr is null? new CommonResult() { Success = false } : cr;
         }
     }
 

@@ -6,6 +6,7 @@ CREATE TABLE roles
 	[createdDate] DATETIME NOT NULL CONSTRAINT df_role_createdDate DEFAULT(GETDATE()),
 	[editedBy] INT NULL,
 	[editedDate] DATETIME NULL,
+	deleted BIT NOT NULL CONSTRAINT df_role_deleted DEFAULT(0),
 	CONSTRAINT pk_roles PRIMARY KEY CLUSTERED (id)
 );
 CREATE TABLE users
@@ -58,4 +59,54 @@ CREATE TABLE outlets
 	[editedDate] DATETIME NULL,
 	[deleted] BIT NOT NULL CONSTRAINT df_outlet_deleted DEFAULT(0),
 	CONSTRAINT pk_outlets PRIMARY KEY CLUSTERED (id)
+);
+CREATE TABLE categories 
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[name] VARCHAR(250) NOT NULL CONSTRAINT df_category_name DEFAULT(''),
+	CONSTRAINT pk_categories PRIMARY KEY CLUSTERED ([id])
+);
+CREATE TABLE products
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[sku] VARCHAR(50) NOT NULL CONSTRAINT df_product_sku DEFAULT(''),
+	[name] VARCHAR(150) NOT NULL CONSTRAINT df_product_name DEFAULT(''),
+	[description] NVARCHAR(MAX) NOT NULL CONSTRAINT df_product_description DEFAULT(N''),
+	[category] INT NOT NULL CONSTRAINT df_product_category DEFAULT(0),
+	[stock] INT NOT NULL CONSTRAINT df_product_stock DEFAULT(0),
+	[minstock] INT NOT NULL CONSTRAINT df_product_minstock DEFAULT(0),
+	[maxstock] INT NOT NULL CONSTRAINT df_product_maxstock DEFAULT(0),
+	[unit] VARCHAR(50) NOT NULL CONSTRAINT df_product_unit DEFAULT(''),
+	[costAverage] FLOAT NOT NULL CONSTRAINT df_product_costaverage DEFAULT(0.00),
+	[price] FLOAT NOT NULL CONSTRAINT df_product_price DEFAULT(0.00),
+	[isActive] BIT NOT NULL CONSTRAINT df_product_isactive DEFAULT(0),
+	[images] VARCHAR(2048) NOT NULL CONSTRAINT df_product_images DEFAULT(''),
+	[createdBy] INT NOT NULL CONSTRAINT df_product_createdBy DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_product_createddate DEFAULT(GETDATE()),
+	[editedBy] INT NULL,
+	[editedDate] DATETIME NULL,
+	[deleted] BIT NOT NULL CONSTRAINT df_product_deleted DEFAULT(0)
+	CONSTRAINT pk_products PRIMARY KEY CLUSTERED ([id])
+);
+CREATE TABLE cashflows
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[date] DATETIME NOT NULL CONSTRAINT df_cashflow_date DEFAULT(GETDATE()),
+	[debt] FLOAT NOT NULL CONSTRAINT df_cashflow_debt DEFAULT(0),
+	[credit] FLOAT NOT NULL CONSTRAINT df_cashflows_credit DEFAULT(0),
+	[notes] VARCHAR(250) NOT NULL CONSTRAINT df_cashflow_notes DEFAULT(''),
+	[creator] INT NOT NULL CONSTRAINT df_cashflow_creator DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_cashflow_createdDate DEFAULT(GETDATE()),
+	CONSTRAINT pk_cashflows PRIMARY KEY CLUSTERED ([id])
+);
+CREATE TABLE dailyreports 
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[outlet] INT NOT NULL,
+	[waiter] INT NOT NULL,
+	income INT NOT NULL CONSTRAINT df_dailyreport_income DEFAULT(0),
+	expense INT NOT NULL CONSTRAINT df_dailyreport_expense DEFAULT(0),
+	creator INT NOT NULL CONSTRAINT df_dailyreport_creator DEFAULT(0),
+	createdDate DATETIME NOT NULL CONSTRAINT df_dailyreport_createdDate DEFAULT(GETDATE()),
+	CONSTRAINT pk_dailyreports PRIMARY KEY CLUSTERED ([id])
 );

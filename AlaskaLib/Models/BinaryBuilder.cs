@@ -30,6 +30,10 @@ namespace Alaska.Models
         {
             writer.Write(value);
         }
+        public void WriteDouble(double value)
+        {
+            writer.Write(value);
+        }
         public void WriteDateTime(DateTime value)
         {
             writer.Write(value.Ticks);
@@ -88,11 +92,12 @@ namespace Alaska.Models
         protected void AddRow(object[] values) => this.table.Rows.Add(values);
         protected int ReadInt32() => reader.ReadInt32();
         protected long ReadInt64() => reader.ReadInt64();
+        protected double ReadDouble() => reader.ReadDouble();
         protected bool ReadBoolean() => reader.ReadBoolean();
         protected object ReadDateTime()
         {
             long longDate = reader.ReadInt64();
-            if (longDate == nullDateTime)
+            if (longDate == nullDateTime || longDate == 0)
             {
                 return DBNull.Value;
             }

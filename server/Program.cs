@@ -40,8 +40,12 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 app.MapAuthentications();
-app.MapUserEndPoint();
-app.MapOutletEndPoint();
+
+app.MapRoleEndPoints();
+app.MapUserEndPoints();
+app.MapProductEndPoints();
+app.MapOutletEndPoints();
+app.MapWaiterEndPoints();
 
 app.MapHomeEndPoint();
 

@@ -15,9 +15,10 @@ namespace Alaska.Models
         [JsonPropertyName("description")] public string Description { get; set; } = "";
         [JsonPropertyName("category")] public int Category { get; set; } = 0;
         [JsonPropertyName("productType")] public int ProductType { get; set; } = 0;
+        [JsonPropertyName("stock")] public int Stock { get; set; } = 0;
         [JsonPropertyName("unit")] public string Unit { get; set; } = "";
         [JsonPropertyName("images")] public List<string> Images { get; set; } = new List<string>();
-        [JsonPropertyName("basicPrice")] public long BasicPrice { get; set; } = 0;
+        [JsonPropertyName("basicPrice")] public double BasicPrice { get; set; } = 0;
         [JsonPropertyName("price")] public double Price { get; set; } = 0;
         [JsonPropertyName("wholesalePrice")] public long WholesalePrice { get; set; } = 0;
         [JsonPropertyName("wholesaleQuantity")] public int WholesaleQuantity { get; set; } = 0;
@@ -40,9 +41,9 @@ namespace Alaska.Models
         }
     }
 
-    public class ProductModel
+    public class ProductViewModel
     {
-        [JsonPropertyName("product")] public Product? Product { get; set; } = null;
+        [JsonPropertyName("product")] public Product Product { get; set; } = new Product();
         [JsonPropertyName("categories")] public List<ProductCategory>? Categories { get; set; } = null;
         [JsonPropertyName("units")] public List<string>? Units { get; set; } = null;
         [JsonPropertyName("stocks")] public List<StockInfo>? Stocks { get; set; } = null;

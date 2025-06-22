@@ -13,13 +13,13 @@ namespace server.Api
 {
     internal static class Users
     {
-        internal static void MapUserEndPoint(this WebApplication app)
+        internal static void MapUserEndPoints(this WebApplication app)
         {
             app.MapGet("/user-manager/", GelAllAsync).RequireAuthorization();
             app.MapGet("/user-manager/{id}", GetByIdAsync).RequireAuthorization();
             app.MapPost("/user-manager/", CreateAsync).RequireAuthorization();
             app.MapPut("/user-manager/", UpdateAsync).RequireAuthorization();
-            app.MapDelete("/user-manager", DeleteAsync).RequireAuthorization();
+            app.MapDelete("/user-manager/{id}", DeleteAsync).RequireAuthorization();
             app.MapPost("/user-manager/reset-password/", UpdatePasswordAsync).RequireAuthorization();
         }
         internal static async Task<IResult> GelAllAsync(HttpContext context, DbClient db)
@@ -53,7 +53,7 @@ namespace server.Api
         internal static async Task<IResult> GetByIdAsync(HttpContext context, DbClient db, int id)
         {
             var uvm = new UserViewModel();
-            var commandText = "SELECT [id], [name] FROM roles ORDER BY [id]";
+            var commandText = "SELECT [id], [name] FROM roles WHERE deleted = 0 ORDER BY [id]";
             await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
             {
                 if (reader is null) return;
@@ -62,7 +62,7 @@ namespace server.Api
                     uvm.Roles.Add(new Role() { Id = reader.GetInt32(0), Name = reader.GetString(1) });
                 }
             }, commandText);
-            commandText = "SELECT [id], [name], [role] FROM users WHERE [deleted] = 0 AND id=@id";
+            commandText = "SELECT [id], [name], [role], [login] FROM users WHERE [deleted] = 0 AND id=@id";
             await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
             {
                 if (reader is null) return;
@@ -72,7 +72,8 @@ namespace server.Api
                     {
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
-                        RoleId = reader.GetInt32(2)
+                        RoleId = reader.GetInt32(2),
+                        Login = reader.GetString(3)
                     };
                 }
             }, commandText, new SqlParameter("@id", id));
@@ -83,25 +84,23 @@ namespace server.Api
             var commandText = """
                 INSERT INTO users ([name], [login], [password], [role], [createdBy])
                 VALUES (@name, @login, HASHBYTES('SHA2_256', @password), @role, @createdBy);
-                SELECT SCOPE_IDENTITY()
                 """;
             var (userID, roleID) = AppHelpers.ExtractPrincipal(context);
             var parameters = new SqlParameter[]
             {
                 new SqlParameter("@name", user.Name),
-                new SqlParameter("@login", user.Emails),
+                new SqlParameter("@login", user.Login),
                 new SqlParameter("@password", user.Password),
                 new SqlParameter("@role", user.RoleId),
                 new SqlParameter("@createdBy", userID)
             };
-            user.Id = await db.ExecuteScalarIntegerAsync(commandText, parameters);
-            return Results.Ok(user);
+            return Results.Ok(await db.ExecuteNonQueryAsync(commandText, parameters));
         }
         internal static async Task<IResult> UpdateAsync(HttpContext context, DbClient db, User user)
         {
             var commandText = """
                 UPDATE users 
-                SET [name] = @name, [role] = @role, editedBy=@editedBy
+                SET [name] = @name, [role] = @role, [password] = HASHBYTES('SHA2_256', @password), editedBy=@editedBy
                 WHERE [id]=@id
                 """;
             var userId = AppHelpers.GetUserID(context);
@@ -110,16 +109,10 @@ namespace server.Api
                 new SqlParameter("@name", user.Name),
                 new SqlParameter("@role", user.RoleId),
                 new SqlParameter("@editedBy", userId),
-                new SqlParameter("@id", user.Id)
+                new SqlParameter("@id", user.Id),
+                new SqlParameter("@password", user.Password)
             };
-            if (await db.ExecuteNonQueryAsync(commandText, parameter))
-            {
-                return Results.Ok(new CommonResult() { Success = true, Message = "Data pengguna berhasil diperbarui" });
-            }
-            else
-            {
-                return Results.Ok(new CommonResult() { Success = false, Message = "Update pengguna gagal, coba lagi nanti" });
-            }
+            return Results.Ok(await db.ExecuteNonQueryAsync(commandText, parameter)) ;
         }
         internal static async Task<IResult> DeleteAsync(HttpContext context, DbClient db, int id)
         {
@@ -130,15 +123,7 @@ namespace server.Api
                 new SqlParameter("@editedBy", userId),
                 new SqlParameter("@id", id)
             };
-            var result = await db.ExecuteNonQueryAsync(commandText, parameters);
-            if (result)
-            {
-                return Results.Ok(new CommonResult() { Success = true, Message = "Data pengguna berhasil dihapus dari database" });
-            }
-            else
-            {
-                return Results.Ok(new CommonResult() { Success = false, Message = "Gagal menghapus data pengguna" });
-            }
+            return Results.Ok(await db.ExecuteNonQueryAsync(commandText, parameters));
         }
         internal static async Task<IResult> UpdatePasswordAsync(ResetPasswordModel model, DbClient db, HttpContext context)
         {
@@ -150,14 +135,7 @@ namespace server.Api
             }
             commandText = "UPDATE users SET [password] = @newpassword WHERE [id] = @id";
             var success = await db.ExecuteNonQueryAsync(commandText, new SqlParameter("@id", model.UserID), new SqlParameter("@newpassword", model.NewPassword));
-            if (success)
-            {
-                return Results.Ok(new CommonResult() { Success = true, Message = "Password berhasil diperbarui" });
-            }
-            else
-            {
-                return Results.Ok(new CommonResult() { Success = false, Message = "Gagal memperbarui password" });
-            }
+            return Results.Ok(success);
         }
     }
 }

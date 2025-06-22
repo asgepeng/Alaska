@@ -17,8 +17,22 @@ namespace WinformApp
             InitializeComponent();
             My.Application.ApiUrl = "http://localhost:5005";
             userService = new UserService();
-        }
 
+            productButton.Tag = ListingType.Product;
+            outletButton.Tag = ListingType.Outlet;
+            waiterButton.Tag = ListingType.Waiter;
+        }
+        private void SetEnableControls(bool enable)
+        {
+            this.newToolStripMenuItem.Enabled = enable;
+            this.refreshButton.Enabled = enable;
+            this.addButton.Enabled = enable;
+            this.deleteButton.Enabled = enable;
+        }
+        internal void SetBindingSource(BindingSource? bs)
+        {
+            this.navigator.BindingSource = bs;
+        }
         private void OpenLoginDialog(object sender, EventArgs e)
         {
             LoginForm dialog = new LoginForm();
@@ -70,22 +84,15 @@ namespace WinformApp
             Process.Start("cloudflared", "tunnel --url http://localhost:5005 --no-autoupdate");
         }
 
-        private void OpenRoleManagementForm(object sender, EventArgs e)
+        private void HandleRoleButtonClicked(object sender, EventArgs e)
         {
-
+            var dialog = new RoleForm();
+            dialog.ShowDialog();
         }
 
         private void OpenOutletForm(object sender, EventArgs e)
         {
-            var form = new OutletForm();
-            form.MdiParent = this;
-            form.Show();
-            form.WindowState = FormWindowState.Maximized;
-        }
-
-        private void OpenWaiterForm(object sender, EventArgs e)
-        {
-            var form = new WaiterForm();
+            var form = new OutletDetailForm();
             form.MdiParent = this;
             form.Show();
             form.WindowState = FormWindowState.Maximized;
@@ -96,9 +103,86 @@ namespace WinformApp
 
         }
 
-        private void OpenProductForm(object sender, EventArgs e)
+        private void OpenListingForm(object sender, EventArgs e)
         {
+            var button = (ToolStripMenuItem)sender;
+            if (button.Tag is null) return;
+            var tp = (ListingType)button.Tag;
 
+            foreach (Form frm in this.MdiChildren)
+            {
+                if (frm is ListingForm lform)
+                {
+                    if (lform.Type == tp)
+                    {
+                        lform.Activate();
+                        return;
+                    }
+                }
+            }
+
+            ListingForm form = new ListingForm(tp);
+            form.MdiParent = this;
+            form.Show();
+            form.WindowState = FormWindowState.Maximized;
+            form.FormClosing += (sender, e) =>
+            {
+                navigator.BindingSource = null;
+            };
+            this.SetEnableControls(true);
+        }
+
+        private void HandleMdiChildActivate(object sender, EventArgs e)
+        {
+            var activeForm = ActiveMdiChild;
+            if (activeForm != null)
+            {
+                if (activeForm is ListingForm lform)
+                {
+                    this.navigator.BindingSource = lform.BindingSource;
+                    this.childFormLabel.Text = lform.Text;
+                    return;
+                }
+            }
+            this.childFormLabel.Text = "";
+            this.SetEnableControls(false);
+            navigator.BindingSource = null;
+        }
+
+        private async void RefreshListing(object sender, EventArgs e)
+        {
+            var activeForm = this.ActiveMdiChild;
+            if (activeForm != null)
+            {
+                if (activeForm is ListingForm lform)
+                {
+                    await lform.LoadDataTableAsync();
+                }
+            }
+        }
+
+        private async void HandleAddNewItem(object sender, EventArgs e)
+        {
+            var activeForm = this.ActiveMdiChild;
+            if (activeForm != null)
+            {
+                if (activeForm is ListingForm lform)
+                {
+                    await lform.OpenNewDialog();
+                }
+            }
+        }
+
+        private async void HandleDeleteRecord(object sender, EventArgs e)
+        {
+            var activeForm = this.ActiveMdiChild;
+            if (activeForm != null)
+            {
+                if (activeForm is ListingForm lform)
+                {
+                    await lform.Delete();
+                }
+            }
         }
     }
 }
