@@ -1,4 +1,5 @@
-﻿using Alaska.Models;
+﻿using Alaska.Data;
+using Alaska.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,8 +18,8 @@ namespace WinformApp.Forms
         Product,
         Outlet,
         Waiter,
-        Income,
-        Expense
+        Sales,
+        CashFlow
     }
     public partial class ListingForm : Form
     {
@@ -42,11 +43,11 @@ namespace WinformApp.Forms
                 case ListingType.Waiter:
                     this.Text = "Daftar Waiter";
                     break;
-                case ListingType.Income:
-                    this.Text = "Daftar Pemasukan";
+                case ListingType.Sales:
+                    this.Text = "Laporan Penjualan Harian";
                     break;
-                case ListingType.Expense:
-                    this.Text = "Daftar Pengeluaran";
+                case ListingType.CashFlow:
+                    this.Text = "Laporan Arus Kas";
                     break;
             }
         }
@@ -60,10 +61,10 @@ namespace WinformApp.Forms
                     return new OutletService();
                 case ListingType.Waiter:
                     return new WaiterService();
-                case ListingType.Income:
-                    return new IncomeService();
-                case ListingType.Expense:
-                    return new ExpenseService();
+                case ListingType.Sales:
+                    return new SaleService();
+                case ListingType.CashFlow:
+                    return new CashflowService();
             }
             return new ProductService();
         }
@@ -77,10 +78,8 @@ namespace WinformApp.Forms
                     return new OutletDetailForm();
                 case ListingType.Waiter:
                     return new WaiterDetailForm();
-                case ListingType.Income:
-                    return new IncomeDetailForm();
-                case ListingType.Expense:
-                    return new ExpenseDetailForm();
+                case ListingType.Sales:
+                    return new EntryDataForm();
             }
             return null;
         }
@@ -132,17 +131,55 @@ namespace WinformApp.Forms
                         new DataTableColumnInfo("Tgl. dibuat", "createdDate", 120, DataGridViewContentAlignment.MiddleRight, "dd-MM-yyyy HH:mm")
                     });
                     break;
+                case ListingType.Sales:
+                    GridHelpers.InitializeDataGridColumns(this.grid, new DataTableColumnInfo[]
+                    {
+                        new DataTableColumnInfo("Kode", "id", 60, DataGridViewContentAlignment.MiddleCenter, "000000"),
+                        new DataTableColumnInfo("Tanggal", "date", 80, DataGridViewContentAlignment.MiddleCenter, "dd-MM-yyyy"),
+                        new DataTableColumnInfo("Pemasukan", "income", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Pengeluaran", "expense", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Selisih", "balance", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Dibuat oleh", "creator", 150),
+                        new DataTableColumnInfo("Tgl. dibuat", "createdDate", 120, DataGridViewContentAlignment.MiddleRight, "dd-MM-yyyy HH:mm")
+                    }, this.BindingSource);
+                    break;
+                case ListingType.CashFlow:
+                    GridHelpers.InitializeDataGridColumns(this.grid, new DataTableColumnInfo[]
+                    {
+                        new DataTableColumnInfo("Tanggal", "date", 120, DataGridViewContentAlignment.MiddleCenter, "dd-MM-yyyy HH:mm"),
+                        new DataTableColumnInfo("Credit", "credit", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Debt", "debt", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Saldo", "balance", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Keterangan", "notes", 350),
+                        new DataTableColumnInfo("Dibuat oleh", "creator", 150),
+                    }, this.BindingSource);
+                    foreach (DataGridViewColumn column in this.grid.Columns)
+                    {
+                        column.SortMode = DataGridViewColumnSortMode.NotSortable;
+                    }
+                    break;
             }
             if (grid.Columns.Count > 0)
             {
                 grid.Columns[0].DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
             }
+            this.grid.ColumnHeadersDefaultCellStyle.Font = new Font(this.Font, FontStyle.Bold);
+            this.grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
         internal async Task OpenNewDialog()
         {
             var dialog = GetFormByType();
             if (dialog != null)
             {
+                if (this.Type == ListingType.Sales)
+                {
+                    var json = await HttpClientSingleton.GetAsync("/trans/sales-check");
+                    int.TryParse(json, out int saleID);
+                    if (saleID > 0)
+                    {
+                        dialog.Tag = saleID;
+                    }
+                }
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     await this.LoadDataTableAsync();
@@ -170,7 +207,7 @@ namespace WinformApp.Forms
             }
         }
 
-        private async void ListingForm_Load(object sender, EventArgs e)
+        private async void HandleFormLoad(object sender, EventArgs e)
         {
             await this.LoadDataTableAsync();
         }

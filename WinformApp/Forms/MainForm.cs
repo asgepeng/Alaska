@@ -21,6 +21,8 @@ namespace WinformApp
             productButton.Tag = ListingType.Product;
             outletButton.Tag = ListingType.Outlet;
             waiterButton.Tag = ListingType.Waiter;
+            saleButton.Tag = ListingType.Sales;
+            cashflowButton.Tag = ListingType.CashFlow;
         }
         private void SetEnableControls(bool enable)
         {
@@ -35,6 +37,11 @@ namespace WinformApp
         }
         private void OpenLoginDialog(object sender, EventArgs e)
         {
+            var hostSettingPath = AppContext.BaseDirectory + "host.ini";
+            if (File.Exists(hostSettingPath))
+            {
+                My.Application.ApiUrl = File.ReadAllText(hostSettingPath).Trim();
+            }
             LoginForm dialog = new LoginForm();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -76,7 +83,8 @@ namespace WinformApp
 
         private async void ForceLogout(object sender, FormClosingEventArgs e)
         {
-            if (My.Application.ApiUrl != "") await HttpClientSingleton.PostAsync("/auth/logout");
+            if (My.Application.ApiToken != "") await HttpClientSingleton.PostAsync("/auth/logout");
+            HttpClientSingleton.Dispose();
         }
 
         private void PublishHomePage(object sender, EventArgs e)
@@ -183,6 +191,12 @@ namespace WinformApp
                     await lform.Delete();
                 }
             }
+        }
+
+        private void HandleChangePasswordButtonClicked(object sender, EventArgs e)
+        {
+            ChangePasswordForm dialog = new ChangePasswordForm();
+            dialog.ShowDialog();
         }
     }
 }

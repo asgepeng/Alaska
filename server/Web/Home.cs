@@ -10,7 +10,7 @@ namespace server.Web
 {
     internal static class Home
     {
-        internal static void MapHomeEndPoint(this WebApplication app)
+        internal static void MapHomeEndPoints(this WebApplication app)
         {
             app.MapGet("/", Index);
         }

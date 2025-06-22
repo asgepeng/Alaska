@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             grid = new DataGridView();
+            panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)grid).BeginInit();
             SuspendLayout();
             // 
@@ -44,14 +45,24 @@
             grid.ColumnHeadersHeight = 26;
             grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             grid.Dock = DockStyle.Fill;
-            grid.Location = new Point(0, 0);
+            grid.Location = new Point(0, 40);
             grid.Name = "grid";
             grid.ReadOnly = true;
             grid.RowHeadersVisible = false;
             grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.Size = new Size(800, 510);
+            grid.Size = new Size(800, 470);
             grid.TabIndex = 4;
             grid.CellDoubleClick += HandleCellDoubleClick;
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.SteelBlue;
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(800, 40);
+            panel1.TabIndex = 5;
+            panel1.Visible = false;
             // 
             // ListingForm
             // 
@@ -59,10 +70,11 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 510);
             Controls.Add(grid);
+            Controls.Add(panel1);
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Name = "ListingForm";
             Text = "ListingForm";
-            Load += ListingForm_Load;
+            Load += HandleFormLoad;
             ((System.ComponentModel.ISupportInitialize)grid).EndInit();
             ResumeLayout(false);
         }
@@ -70,5 +82,6 @@
         #endregion
 
         private DataGridView grid;
+        private Panel panel1;
     }
 }

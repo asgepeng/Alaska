@@ -127,15 +127,16 @@ namespace server.Api
         }
         internal static async Task<IResult> UpdatePasswordAsync(ResetPasswordModel model, DbClient db, HttpContext context)
         {
-            var commandText = "SELECT 1 FROM users WHERE id = @id AND [password] = HASHBYTES('SHA2_256', @oldpassword)";
-            var oldPasswordMatch = await db.AnyRecords(commandText, new SqlParameter("@id", model.UserID), new SqlParameter("@oldpassword", model.OldPassword));
+            var userID = AppHelpers.GetUserID(context);
+            var commandText = "SELECT 1 FROM users WHERE id = @id AND [password] = HASHBYTES('SHA2_256', CAST(@oldpassword AS NVARCHAR))";
+            var oldPasswordMatch = await db.AnyRecords(commandText, new SqlParameter("@id", userID), new SqlParameter("@oldpassword", model.OldPassword));
             if (!oldPasswordMatch)
             {
                 return Results.Ok(new CommonResult() { Success = false, Message = "Password lama tidak valid" });
             }
-            commandText = "UPDATE users SET [password] = @newpassword WHERE [id] = @id";
-            var success = await db.ExecuteNonQueryAsync(commandText, new SqlParameter("@id", model.UserID), new SqlParameter("@newpassword", model.NewPassword));
-            return Results.Ok(success);
+            commandText = "UPDATE users SET [password] = HASHBYTES('SHA2_256', CAST(@newpassword AS NVARCHAR)) WHERE [id] = @id";
+            var success = await db.ExecuteNonQueryAsync(commandText, new SqlParameter("@id", userID), new SqlParameter("@newpassword", model.NewPassword));
+            return Results.Ok(new CommonResult() { Success = true, Message = "Password berhasil diperbarui" });
         }
     }
 }

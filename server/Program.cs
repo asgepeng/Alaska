@@ -46,7 +46,10 @@ app.MapUserEndPoints();
 app.MapProductEndPoints();
 app.MapOutletEndPoints();
 app.MapWaiterEndPoints();
+app.MapSaleEndPoints();
+app.MapCashflowEndPoints();
+app.MapHomeEndPoints();
 
-app.MapHomeEndPoint();
+app.InitializeDatabase();
 
 app.Run();

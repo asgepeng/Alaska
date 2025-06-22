@@ -27,7 +27,7 @@ CREATE TABLE authentications
 (
 	[token] UNIQUEIDENTIFIER NOT NULL,
 	[user] INT NOT NULL CONSTRAINT df_authentication_user DEFAULT(0),
-	[expired] INT NOT NULL CONSTRAINT df_authentication_expired DEFAULT(0),
+	[expired] DATETIME NOT NULL CONSTRAINT df_authentication_expired DEFAULT(GETDATE()),
 	CONSTRAINT pk_authentications PRIMARY KEY ([token])
 );
 INSERT INTO users ([name], [login], [password], [createdBy], [createdAt])
@@ -109,4 +109,28 @@ CREATE TABLE dailyreports
 	creator INT NOT NULL CONSTRAINT df_dailyreport_creator DEFAULT(0),
 	createdDate DATETIME NOT NULL CONSTRAINT df_dailyreport_createdDate DEFAULT(GETDATE()),
 	CONSTRAINT pk_dailyreports PRIMARY KEY CLUSTERED ([id])
+);
+CREATE TABLE dailySaleItems
+(
+	id INT NOT NULL IDENTITY(1,1),
+	dailySale INT NOT NULL CONSTRAINT df_dailySaleItem_dailySale DEFAULT(0),
+	outlet INT NOT NULL CONSTRAINT df_dailySaleItem_outlet DEFAULT(0),
+	waiter INT NOT NULL CONSTRAINT df_dailySaleItem_waiter DEFAULT(0),
+	income FLOAT NOT NULL CONSTRAINT df_dailySaleItem_income DEFAULT(0),
+	expense FLOAT NOT NULL CONSTRAINT df_dailySaleItem_expense DEFAULT(0),
+	notes VARCHAR(250) NOT NULL CONSTRAINT df_dailySaleItem_notes DEFAULT(0),
+	CONSTRAINT pk_dailySaleItems PRIMARY KEY CLUSTERED ([id])
+);
+CREATE TABLE dailySales
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[date] DATE NOT NULL,
+	[cashIn] INT NOT NULL CONSTRAINT df_dailySale_cashIn DEFAULT(0),
+	[cashOut] INT NOT NULL CONSTRAINT df_dailySale_cashOut DEFAULT(0),
+	[notes] VARCHAR(250) NOT NULL CONSTRAINT df_dailySale_notes DEFAULT(''),
+	[creator] INT NOT NULL CONSTRAINT df_dailySale_creator DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_dailySale_createdDate DEFAULT(GETDATE()),
+	[editor] INT NULL,
+	[editedDate] DATETIME NULL,
+	CONSTRAINT pk_dailySales PRIMARY KEY CLUSTERED ([id])
 );

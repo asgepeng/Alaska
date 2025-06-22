@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 
 namespace Alaska;
 
+[JsonSerializable(typeof(DailySale))]
+[JsonSerializable(typeof(DailySalesItem))]
 [JsonSerializable(typeof(OutletViewModel))]
 [JsonSerializable(typeof(Outlet))]
 [JsonSerializable(typeof(DropdownOption))]

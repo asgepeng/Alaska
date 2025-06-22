@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -116,7 +117,7 @@ namespace Alaska.Data
                 }
                 catch (Exception ex)
                 {
-                    System.IO.File.WriteAllText(AppContext.BaseDirectory + "\\sql_error_non_query.txt", DateTime.Now + "\n" + ex.ToString());
+                    System.IO.File.WriteAllText(AppContext.BaseDirectory + "\\sql_error_non_query.txt", commandText + "\n" + DateTime.Now + "\n" + ex.ToString());
                     return false;
                 }
                 finally
@@ -188,30 +189,19 @@ namespace Alaska.Data
         }
     }
 
-    internal class DbInitializer
+    internal static class DbInitializer
     {
-        private readonly string connstring = "server=localhost;database=information_schema;uid=root;pwd=d024c5b1-fa9f-492a-a345-03b1995340b9";
-        private readonly DbClient db;
-        internal DbInitializer()
+        internal static async void InitializeDatabase(this WebApplication app)
         {
-            this.db = new DbClient(this.connstring);
-        }
-        internal async Task CreateDatabase()
-        {
+            string connstring = "Server=.\\SQLEXPRESS;Database=master;Integrated Security=True;TrustServerCertificate=True";
+            DbClient db = new DbClient(connstring);
             bool exists = false;
             exists = await db.AnyRecords("SELECT 1 FROM information_schema.schemata WHERE SCHEMA_NAME = 'alaska'");
             if (!exists)
             {
-                System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                sb.AppendLine("CREATE DATABASE posdb;");
-                sb.AppendLine("CREATE USER 'astroboy'@'%' IDENTIFIED BY 'Orogin@k-66171';");
-                sb.AppendLine("GRANT ALL PRIVILEGES ON posdb.*TO 'astroboy'@'%';");
-                sb.AppendLine("FLUSH PRIVILEGED;");
-                sb.AppendLine("USE  posdb;");
-                sb.AppendLine("CREATE TABLE `users` (id INT NOT NULL AUTO_INCREMENT, `username` VARCHAR(100) NOT NULL DEFAULT '', `email` VARCHAR(50) NOT NULL DEFAULT '', CONSTRAINT pk_users PRIMARY KEY CLUSTERED (`id` ASC));");
-                sb.AppendLine("CREATE TABLE `logins` (id INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(50) NOT NULL DEFAULT '', `password` BINARY(32) NOT NULL, CONSTRAINT pk_logins PRIMARY KEY CLUSTERED (id ASC);");
-
-                await db.ExecuteNonQueryAsync(sb.ToString());
+                await db.ExecuteNonQueryAsync("CREATE DATABASE alaska");
+                db = new DbClient("Server=.\\SQLEXPRESS;Database=alaska;Integrated Security=True;TrustServerCertificate=True");
+                await db.ExecuteNonQueryAsync(global::server.Properties.Resources.sql_ddl);
             }
         }
     }

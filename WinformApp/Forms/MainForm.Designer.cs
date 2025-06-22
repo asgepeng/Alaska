@@ -46,10 +46,9 @@
             toolStripSeparator4 = new ToolStripSeparator();
             expenseButton = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
-            incomeButton = new ToolStripMenuItem();
-            opexButton = new ToolStripMenuItem();
+            saleButton = new ToolStripMenuItem();
             laporanToolStripMenuItem = new ToolStripMenuItem();
-            laporanArusKasToolStripMenuItem = new ToolStripMenuItem();
+            cashflowButton = new ToolStripMenuItem();
             toolsToolStripMenuItem1 = new ToolStripMenuItem();
             goToHomepageToolStripMenuItem = new ToolStripMenuItem();
             publishCloudflaredToolStripMenuItem = new ToolStripMenuItem();
@@ -71,7 +70,6 @@
             positionTextBox = new ToolStripTextBox();
             nextButton = new ToolStripButton();
             lastRowButton = new ToolStripButton();
-            pasteToolStripButton = new ToolStripButton();
             sparator3 = new ToolStripSeparator();
             helpToolStripButton = new ToolStripButton();
             childFormLabel = new ToolStripLabel();
@@ -144,6 +142,7 @@
             ubahPasswordToolStripMenuItem.Name = "ubahPasswordToolStripMenuItem";
             ubahPasswordToolStripMenuItem.Size = new Size(221, 22);
             ubahPasswordToolStripMenuItem.Text = "Ubah Password";
+            ubahPasswordToolStripMenuItem.Click += HandleChangePasswordButtonClicked;
             // 
             // exitToolStripMenuItem
             // 
@@ -202,37 +201,31 @@
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { incomeButton, opexButton });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saleButton });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new Size(73, 21);
             toolsToolStripMenuItem.Text = "&Transaksi";
             // 
-            // incomeButton
+            // saleButton
             // 
-            incomeButton.Name = "incomeButton";
-            incomeButton.Size = new Size(148, 22);
-            incomeButton.Text = "&Pemasukan";
-            incomeButton.Click += OpenListingForm;
-            // 
-            // opexButton
-            // 
-            opexButton.Name = "opexButton";
-            opexButton.Size = new Size(148, 22);
-            opexButton.Text = "Penge&luaran";
-            opexButton.Click += OpenListingForm;
+            saleButton.Name = "saleButton";
+            saleButton.Size = new Size(231, 22);
+            saleButton.Text = "&Penjualan Tea && Chocolate";
+            saleButton.Click += OpenListingForm;
             // 
             // laporanToolStripMenuItem
             // 
-            laporanToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { laporanArusKasToolStripMenuItem });
+            laporanToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { cashflowButton });
             laporanToolStripMenuItem.Name = "laporanToolStripMenuItem";
             laporanToolStripMenuItem.Size = new Size(68, 21);
             laporanToolStripMenuItem.Text = "Laporan";
             // 
-            // laporanArusKasToolStripMenuItem
+            // cashflowButton
             // 
-            laporanArusKasToolStripMenuItem.Name = "laporanArusKasToolStripMenuItem";
-            laporanArusKasToolStripMenuItem.Size = new Size(179, 22);
-            laporanArusKasToolStripMenuItem.Text = "Laporan Arus Kas";
+            cashflowButton.Name = "cashflowButton";
+            cashflowButton.Size = new Size(179, 22);
+            cashflowButton.Text = "Laporan Arus Kas";
+            cashflowButton.Click += OpenListingForm;
             // 
             // toolsToolStripMenuItem1
             // 
@@ -305,7 +298,7 @@
             navigator.CountItem = countLabel;
             navigator.DeleteItem = null;
             navigator.ImageScalingSize = new Size(24, 24);
-            navigator.Items.AddRange(new ToolStripItem[] { refreshButton, addButton, deleteButton, sparator1, firstRowButton, previousRowButton, sparator2, positionTextBox, countLabel, nextButton, lastRowButton, pasteToolStripButton, sparator3, helpToolStripButton, childFormLabel });
+            navigator.Items.AddRange(new ToolStripItem[] { refreshButton, addButton, deleteButton, sparator1, firstRowButton, previousRowButton, sparator2, positionTextBox, countLabel, nextButton, lastRowButton, sparator3, helpToolStripButton, childFormLabel });
             navigator.Location = new Point(0, 25);
             navigator.MoveFirstItem = firstRowButton;
             navigator.MoveLastItem = previousRowButton;
@@ -409,15 +402,6 @@
             lastRowButton.Size = new Size(28, 28);
             lastRowButton.Text = "&Copy";
             // 
-            // pasteToolStripButton
-            // 
-            pasteToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            pasteToolStripButton.Image = (Image)resources.GetObject("pasteToolStripButton.Image");
-            pasteToolStripButton.ImageTransparentColor = Color.Magenta;
-            pasteToolStripButton.Name = "pasteToolStripButton";
-            pasteToolStripButton.Size = new Size(28, 28);
-            pasteToolStripButton.Text = "&Paste";
-            // 
             // sparator3
             // 
             sparator3.Name = "sparator3";
@@ -452,7 +436,7 @@
             IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
-            Text = "Form1";
+            Text = "Alaska Application";
             FormClosing += ForceLogout;
             Load += OpenLoginDialog;
             MdiChildActivate += HandleMdiChildActivate;
@@ -483,8 +467,7 @@
         private ToolStripMenuItem waiterButton;
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem toolsToolStripMenuItem;
-        private ToolStripMenuItem incomeButton;
-        private ToolStripMenuItem opexButton;
+        private ToolStripMenuItem saleButton;
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem toolsToolStripMenuItem1;
@@ -495,7 +478,7 @@
         private ToolStripStatusLabel m_Hostname;
         private ToolStripMenuItem publishCloudflaredToolStripMenuItem;
         private ToolStripMenuItem laporanToolStripMenuItem;
-        private ToolStripMenuItem laporanArusKasToolStripMenuItem;
+        private ToolStripMenuItem cashflowButton;
         private BindingNavigator navigator;
         private ToolStripButton addButton;
         private ToolStripButton deleteButton;
@@ -504,7 +487,6 @@
         private ToolStripSeparator sparator2;
         private ToolStripButton nextButton;
         private ToolStripButton lastRowButton;
-        private ToolStripButton pasteToolStripButton;
         private ToolStripSeparator sparator3;
         private ToolStripButton helpToolStripButton;
         private ToolStripLabel childFormLabel;
