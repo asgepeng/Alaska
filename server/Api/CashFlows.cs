@@ -15,14 +15,15 @@ namespace server.Api
     {
         internal static void MapCashflowEndPoints(this WebApplication app)
         {
-            app.MapGet("/reports/cashflows", GetAllAsync).RequireAuthorization();
+            app.MapPost("/reports/cashflows", GetAllAsync).RequireAuthorization();
         }
-        internal static async Task<IResult> GetAllAsync(HttpContext context, DbClient db)
+        internal static async Task<IResult> GetAllAsync(Period period, HttpContext context, DbClient db)
         {
             var commandTex = """
                 SELECT c.id, c.[date], c.debt, c.credit, c.notes, u.[name] AS creator
                 FROM cashflows AS c
                 INNER JOIN users AS u ON c.creator = u.id
+                WHERE c.[date] BETWEEN @start AND @end
                 ORDER BY c.[date]
                 """;
             byte[] data = Array.Empty<byte>();
@@ -45,7 +46,7 @@ namespace server.Api
                         builder.WriteString(reader.GetString(5));
                     }
                     data = builder.ToArray();
-                }, commandTex);
+                }, commandTex, new SqlParameter("@start", period.From), new SqlParameter("@end", period.To));
             }
             return Results.File(data, "application/octet-stream");
         }

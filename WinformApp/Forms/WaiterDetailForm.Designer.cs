@@ -42,7 +42,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 25);
+            label1.Location = new Point(12, 47);
             label1.Name = "label1";
             label1.Size = new Size(43, 17);
             label1.TabIndex = 0;
@@ -50,24 +50,24 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(12, 45);
+            textBox1.Location = new Point(12, 67);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(312, 25);
+            textBox1.Size = new Size(310, 25);
             textBox1.TabIndex = 1;
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(12, 93);
+            textBox2.Location = new Point(12, 115);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
             textBox2.ScrollBars = ScrollBars.Both;
-            textBox2.Size = new Size(312, 49);
+            textBox2.Size = new Size(310, 49);
             textBox2.TabIndex = 3;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 73);
+            label2.Location = new Point(12, 95);
             label2.Name = "label2";
             label2.Size = new Size(43, 17);
             label2.TabIndex = 2;
@@ -75,15 +75,15 @@
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(12, 165);
+            textBox3.Location = new Point(12, 187);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(312, 25);
+            textBox3.Size = new Size(310, 25);
             textBox3.TabIndex = 5;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(12, 145);
+            label3.Location = new Point(12, 167);
             label3.Name = "label3";
             label3.Size = new Size(100, 17);
             label3.TabIndex = 4;
@@ -91,15 +91,15 @@
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(12, 213);
+            textBox4.Location = new Point(12, 235);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(312, 25);
+            textBox4.Size = new Size(310, 25);
             textBox4.TabIndex = 7;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(12, 193);
+            label4.Location = new Point(12, 215);
             label4.Name = "label4";
             label4.Size = new Size(83, 17);
             label4.TabIndex = 6;
@@ -111,9 +111,9 @@
             loginButton.FlatAppearance.BorderSize = 0;
             loginButton.FlatStyle = FlatStyle.Flat;
             loginButton.ForeColor = Color.White;
-            loginButton.Location = new Point(12, 284);
+            loginButton.Location = new Point(12, 313);
             loginButton.Name = "loginButton";
-            loginButton.Size = new Size(312, 36);
+            loginButton.Size = new Size(310, 36);
             loginButton.TabIndex = 8;
             loginButton.Text = "Simpan";
             loginButton.UseVisualStyleBackColor = false;
@@ -123,7 +123,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(336, 332);
+            ClientSize = new Size(334, 361);
             Controls.Add(loginButton);
             Controls.Add(textBox4);
             Controls.Add(label4);
@@ -134,9 +134,12 @@
             Controls.Add(textBox1);
             Controls.Add(label1);
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "WaiterDetailForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "WaiterDetailForm";
+            Text = "Waiter";
             Load += WaiterDetailForm_Load;
             ResumeLayout(false);
             PerformLayout();

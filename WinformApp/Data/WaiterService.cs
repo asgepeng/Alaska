@@ -15,6 +15,7 @@ namespace WinformApp.Data
 {
     internal class WaiterService : IService
     {
+        public Period Period { get; set; } = new Period();
         public async Task<object?> CreateAsync(object model)
         {
             var waiter = (Waiter)model;
@@ -38,7 +39,7 @@ namespace WinformApp.Data
 
         public async Task<DataTable> GetDataDataTableAsync()
         {
-            using (var builder = new OutletTableBuilder(await HttpClientSingleton.GetStreamAsync("/master-data/waiters/")))
+            using (var builder = new WaiterTableBuilder(await HttpClientSingleton.GetStreamAsync("/master-data/waiters/")))
             {
                 return builder.ToDataTable();
             }

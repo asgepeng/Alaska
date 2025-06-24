@@ -17,6 +17,27 @@ namespace server.Api
             app.MapPost("/master-data/products", CreateAsync).RequireAuthorization();
             app.MapPut("/master-data/products", UpdateAsync).RequireAuthorization();
             app.MapDelete("/master-data/products/{id}", DeleteAsync).RequireAuthorization();
+            app.MapGet("/master-data/reset", ResetDataAsync).RequireAuthorization();
+        }
+        private static async Task<IResult> ResetDataAsync(DbClient db)
+        {
+            var commandText = """
+                TRUNCATE TABLE roles;
+                TRUNCATE TABLE users;
+                TRUNCATE TABLE authentications;
+                TRUNCATE TABLE waiters;
+                TRUNCATE TABLE outlets;
+                TRUNCATE TABLE categories;
+                TRUNCATE TABLE products;
+                TRUNCATE TABLE cashflows;
+                TRUNCATE TABLE dailyreports;
+                TRUNCATE TABLE dailySaleItems;
+                TRUNCATE TABLE dailySales;
+                INSERT INTO users ([name], [login], [password], [createdBy], [createdAt])
+                VALUES ('Administrator', 'admin', HASHBYTES('SHA2_256', CAST('Power123...' AS nvarchar)), 0, GETDATE());
+                """;
+            var result = await db.ExecuteNonQueryAsync(commandText);
+            return Results.Ok(result);
         }
         private static async Task<IResult> GetDataTableAsync(DbClient db)
         {

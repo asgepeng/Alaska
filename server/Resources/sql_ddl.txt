@@ -52,6 +52,7 @@ CREATE TABLE outlets
 	id INT NOT NULL IDENTITY(1,1),
 	[name] VARCHAR(50) NOT NULL CONSTRAINT df_outlet_name DEFAULT(''),
 	[streetAddress] VARCHAR(250) NOT NULL CONSTRAINT df_outlet_streetAddress DEFAULT(''),
+	[type] INT NOT NULL CONSTRAINT df_outlet_type DEFAULT(0),
 	[waiterId] INT NOT NULL CONSTRAINT df_outlet_waiterId DEFAULT(0),
 	[createdBy] INT NOT NULL CONSTRAINT df_outlet_createdBy DEFAULT(0),
 	[createdDate] DATETIME NOT NULL CONSTRAINT df_outlet_createdDate DEFAULT(GETDATE()),
@@ -99,17 +100,6 @@ CREATE TABLE cashflows
 	[createdDate] DATETIME NOT NULL CONSTRAINT df_cashflow_createdDate DEFAULT(GETDATE()),
 	CONSTRAINT pk_cashflows PRIMARY KEY CLUSTERED ([id])
 );
-CREATE TABLE dailyreports 
-(
-	id INT NOT NULL IDENTITY(1,1),
-	[outlet] INT NOT NULL,
-	[waiter] INT NOT NULL,
-	income INT NOT NULL CONSTRAINT df_dailyreport_income DEFAULT(0),
-	expense INT NOT NULL CONSTRAINT df_dailyreport_expense DEFAULT(0),
-	creator INT NOT NULL CONSTRAINT df_dailyreport_creator DEFAULT(0),
-	createdDate DATETIME NOT NULL CONSTRAINT df_dailyreport_createdDate DEFAULT(GETDATE()),
-	CONSTRAINT pk_dailyreports PRIMARY KEY CLUSTERED ([id])
-);
 CREATE TABLE dailySaleItems
 (
 	id INT NOT NULL IDENTITY(1,1),
@@ -133,4 +123,34 @@ CREATE TABLE dailySales
 	[editor] INT NULL,
 	[editedDate] DATETIME NULL,
 	CONSTRAINT pk_dailySales PRIMARY KEY CLUSTERED ([id])
+);
+CREATE TABLE costTypes
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[name] VARCHAR(250) NOT NULL CONSTRAINT df_costType_name DEFAULT(''),
+	[type] INT NOT NULL CONSTRAINT df_costType_type DEFAULT(0),
+	[creator] INT NOT NULL CONSTRAINT df_costType_creator DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_costType_createdDate DEFAULT(GETDATE()),
+	[editor] INT NULL,
+	[editedDate] DATETIME NULL,
+	[deleted] BIT NOT NULL CONSTRAINT df_costType_deleted DEFAULT(0),
+	CONSTRAINT pk_costTypes PRIMARY KEY CLUSTERED (id)
+);
+CREATE TABLE expenses
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[date] DATETIME NOT NULL CONSTRAINT df_expense_date DEFAULT(GETDATE()),
+	[cashoutId] INT NOT NULL CONSTRAINT df_expense_cashoutId DEFAULT(0),
+	[notes] VARCHAR(250) NOT NULL CONSTRAINT df_expense_notes DEFAULT(''),
+	[creator] INT NOT NULL CONSTRAINT df_expense_creator DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_expense_createdDate DEFAULT(GETDATE()),
+	CONSTRAINT pk_expenses PRIMARY KEY CLUSTERED (id)
+);
+CREATE TABLE dailyExpenses
+(
+	[id] INT NOT NULL IDENTITY(1,1),
+	[dailySale] INT NOT NULL CONSTRAINT df_dailyExpense_dailySale DEFAULT(0),
+	[costType] INT NOT NULL CONSTRAINT df_dailyExpense_costType DEFAULT(0),
+	[costAmount] FLOAT NOT NULL CONSTRAINT df_dailyExpense_costAmount DEFAULT(0),
+	CONSTRAINT pk_dailyExpenses PRIMARY KEY CLUSTERED (id)
 );

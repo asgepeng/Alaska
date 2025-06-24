@@ -13,6 +13,7 @@ namespace WinformApp.Data
 {
     internal class ProductService : IService
     {
+        public Period Period { get; set; } = new Period();
         public async Task<object?> CreateAsync(object model)
         {
             var json = await HttpClientSingleton.PostAsync("/master-data/products", JsonSerializer.Serialize((Product)model, AppJsonSerializerContext.Default.Product));

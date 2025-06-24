@@ -68,19 +68,18 @@
             saveButton.Location = new Point(28, 306);
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(276, 36);
-            saveButton.TabIndex = 10;
+            saveButton.TabIndex = 3;
             saveButton.Text = "Ubah Password";
             saveButton.UseVisualStyleBackColor = false;
             saveButton.Click += HandleButtonClicked;
             // 
-            // oledPasswrodTextBox
+            // oldPasswrodTextBox
             // 
             oldPasswrodTextBox.Location = new Point(28, 168);
-            oldPasswrodTextBox.Name = "oledPasswrodTextBox";
+            oldPasswrodTextBox.Name = "oldPasswrodTextBox";
             oldPasswrodTextBox.PasswordChar = '*';
-            oldPasswrodTextBox.PlaceholderText = "Password";
             oldPasswrodTextBox.Size = new Size(276, 25);
-            oldPasswrodTextBox.TabIndex = 9;
+            oldPasswrodTextBox.TabIndex = 0;
             oldPasswrodTextBox.UseSystemPasswordChar = true;
             // 
             // label2
@@ -98,9 +97,8 @@
             newPasswordTextBox.Location = new Point(28, 216);
             newPasswordTextBox.Name = "newPasswordTextBox";
             newPasswordTextBox.PasswordChar = '*';
-            newPasswordTextBox.PlaceholderText = "Password";
             newPasswordTextBox.Size = new Size(276, 25);
-            newPasswordTextBox.TabIndex = 13;
+            newPasswordTextBox.TabIndex = 1;
             newPasswordTextBox.UseSystemPasswordChar = true;
             // 
             // label4
@@ -118,9 +116,8 @@
             confirmPasswordTextBox.Location = new Point(28, 264);
             confirmPasswordTextBox.Name = "confirmPasswordTextBox";
             confirmPasswordTextBox.PasswordChar = '*';
-            confirmPasswordTextBox.PlaceholderText = "Password";
             confirmPasswordTextBox.Size = new Size(276, 25);
-            confirmPasswordTextBox.TabIndex = 15;
+            confirmPasswordTextBox.TabIndex = 2;
             confirmPasswordTextBox.UseSystemPasswordChar = true;
             // 
             // pictureBox1

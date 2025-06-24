@@ -12,6 +12,7 @@ namespace WinformApp
     public partial class MainForm : Form
     {
         private UserService userService;
+
         public MainForm()
         {
             InitializeComponent();
@@ -23,8 +24,9 @@ namespace WinformApp
             waiterButton.Tag = ListingType.Waiter;
             saleButton.Tag = ListingType.Sales;
             cashflowButton.Tag = ListingType.CashFlow;
+            costTypeButton.Tag = ListingType.CostType;
         }
-        private void SetEnableControls(bool enable)
+        private void SetEnableControls(bool enable, bool usePeriod)
         {
             this.newToolStripMenuItem.Enabled = enable;
             this.refreshButton.Enabled = enable;
@@ -137,23 +139,25 @@ namespace WinformApp
             {
                 navigator.BindingSource = null;
             };
-            this.SetEnableControls(true);
+            this.SetEnableControls(true, form.UsePeriod());
         }
 
-        private void HandleMdiChildActivate(object sender, EventArgs e)
+        private async void HandleMdiChildActivate(object sender, EventArgs e)
         {
             var activeForm = ActiveMdiChild;
             if (activeForm != null)
             {
                 if (activeForm is ListingForm lform)
                 {
+                    await lform.LoadDataTableAsync();
                     this.navigator.BindingSource = lform.BindingSource;
                     this.childFormLabel.Text = lform.Text;
+                    this.SetEnableControls(true, lform.UsePeriod());
                     return;
                 }
             }
             this.childFormLabel.Text = "";
-            this.SetEnableControls(false);
+            this.SetEnableControls(false, false);
             navigator.BindingSource = null;
         }
 
@@ -197,6 +201,30 @@ namespace WinformApp
         {
             ChangePasswordForm dialog = new ChangePasswordForm();
             dialog.ShowDialog();
+        }
+
+        private async void OpenCategoryProduct(object sender, EventArgs e)
+        {
+            if (this.MdiChildren.Length > 0)
+            {
+                MessageBox.Show("Tutup semua windows yang terbuka terlebih dahulu", "Windows", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            if (MessageBox.Show("Yakin mau menghapus semua data? Jika anda melanjutkan, data tidak bisa dipulihkan kembali", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                var json = await HttpClientSingleton.GetAsync("/master-data/reset");
+                if (json == "true")
+                {
+                    MessageBox.Show("Reset data berhasil", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Application.Restart();
+                }
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutForm form = new AboutForm();
+            form.ShowDialog();
         }
     }
 }

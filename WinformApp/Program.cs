@@ -19,6 +19,9 @@ namespace Alaska
             Application.Run(new MainForm());
         }
     }
+
+    [JsonSerializable(typeof(CostCategory))]
+    [JsonSerializable(typeof(ExportProfile))]
     [JsonSerializable(typeof(ResetPasswordModel))]
     [JsonSerializable(typeof(DailySale))]
     [JsonSerializable(typeof(DailySalesItem))]

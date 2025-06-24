@@ -14,6 +14,7 @@ namespace WinformApp.Data
 {
     internal class SaleService : IService
     {
+        public Period Period { get; set; } = new Period();
         public async Task<object?> CreateAsync(object model)
         {
             var waiter = (Waiter)model;
@@ -36,13 +37,8 @@ namespace WinformApp.Data
         }
 
         public async Task<DataTable> GetDataDataTableAsync()
-        {
-            var period = new Period()
-            {
-                From = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1, 0, 0, 0),
-                To = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 23, 59, 59)
-            };
-            var json = JsonSerializer.Serialize(period, AppJsonSerializerContext.Default.Period);
+        {            
+            var json = JsonSerializer.Serialize(Period, AppJsonSerializerContext.Default.Period);
             using (var builder = new SalesTableBuilder(await HttpClientSingleton.PostStreamAsync("/trans/sales", json)))
             {
                 return builder.ToDataTable();

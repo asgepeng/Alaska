@@ -1,5 +1,6 @@
 ﻿using Alaska;
 using Alaska.Data;
+using Alaska.Models;
 using AlaskaLib.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace WinformApp.Forms
 {
@@ -20,6 +22,7 @@ namespace WinformApp.Forms
         public EntryDataForm()
         {
             InitializeComponent();
+            this.dateTimePicker1.Value = DateTime.Today;
         }
         private async Task LoadDataEntryAsync()
         {
@@ -30,9 +33,10 @@ namespace WinformApp.Forms
                 this.DailySale = JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.DailySale);
                 if (DailySale != null)
                 {
-                    this.dateLabel.Text = this.DailySale.Date.ToString("dd-MM-yyyy");
+                    this.dateTimePicker1.Value = this.DailySale.Date;
                     this.dailySalesItemBindingSource.DataSource = DailySale.Items;
                     this.notesTextBox.Text = DailySale.Notes;
+                    this.dateTimePicker1.Enabled = DailySale.Id == 0;
                 }
             }
         }
@@ -40,7 +44,7 @@ namespace WinformApp.Forms
         private void Calculate()
         {
             if (this.DailySale is null) return;
-            double balance = 0;            
+            double balance = 0;
             var (totalIncome, totalExpense) = this.DailySale.Calculate();
             balance = totalIncome - totalExpense;
             this.incomeLabel.Text = totalIncome.ToString("N0");
@@ -64,6 +68,20 @@ namespace WinformApp.Forms
             if (this.DailySale is null) return;
 
             this.DailySale.Notes = this.notesTextBox.Text.Trim();
+            if (this.DailySale.Id == 0)
+            {
+                this.DailySale.Date = this.dateTimePicker1.Value;
+                var period = JsonSerializer.Serialize(new Period() { From = new DateTime(DailySale.Date.Year, DailySale.Date.Month, DailySale.Date.Day, 0, 0, 0) }, AppJsonSerializerContext.Default.Period);
+                var json = await HttpClientSingleton.PostAsync("/trans/sales-check", period);
+                int.TryParse(json, out int saleID);
+                if (saleID > 0)
+                {
+                    MessageBox.Show($"Sudah ada entry data pada tanggal {dateTimePicker1.Value.ToString("dd/MM/yyyy")}, silakan pilih tanggal lain", "Tanggal tidak tersedia", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.dateTimePicker1.Focus();
+                    return;
+                }
+            }
+
 
             var dailySale = JsonSerializer.Serialize(DailySale, AppJsonSerializerContext.Default.DailySale);
             var result = await HttpClientSingleton.PostAsync("/trans/sales-submit", dailySale);
@@ -81,6 +99,26 @@ namespace WinformApp.Forms
             {
                 Calculate();
             }
+        }
+
+        internal void SetExpense(double value)
+        {
+            if (DailySale is null) return;
+
+            DailySale.TotalExpense = value;
+            this.expenseLabel.Text = DailySale.TotalExpense.ToString("N0");
+        }
+
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.ThrowException = false;
+        }
+
+        private void HandleButtonExpenseClicked(object sender, EventArgs e)
+        {
+            var Form = new EntryExpenseForm();
+            Form.eForm = this;
+            Form.ShowDialog();
         }
     }
 }

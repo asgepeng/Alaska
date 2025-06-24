@@ -14,6 +14,7 @@ namespace WinformApp.Data
 {
     internal class CashflowService : IService
     {
+        public Period Period { get; set; } = new Period();
         public async Task<object?> CreateAsync(object model)
         {
             Outlet outlet = (Outlet)model;
@@ -36,7 +37,8 @@ namespace WinformApp.Data
 
         public async Task<DataTable> GetDataDataTableAsync()
         {
-            using (var builder = new CashflowTableBuilder(await HttpClientSingleton.GetStreamAsync("/reports/cashflows")))
+            var json = JsonSerializer.Serialize(this.Period, AppJsonSerializerContext.Default.Period);
+            using (var builder = new CashflowTableBuilder(await HttpClientSingleton.PostStreamAsync("/reports/cashflows", json)))
             {
                 return builder.ToDataTable();
             }

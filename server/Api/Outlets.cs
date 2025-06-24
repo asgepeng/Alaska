@@ -26,10 +26,10 @@ namespace server.Api
         {
             var list = new List<Outlet>();
             string commandText = """
-                SELECT o.id, o.[name], o.[streetAddress] AS [location], w.[name] AS waiter, u.[name] AS createdBy, o.[createdDate]
+                SELECT o.id, o.[name], o.[streetAddress] AS [location], CASE WHEN o.[type] = 0 THEN 'Internal' ELSE 'Mitra' END AS [type], ISNULL(w.[name], '-') AS waiter, u.[name] AS createdBy, o.[createdDate]
                 FROM outlets AS o
-                INNER JOIN waiters AS w ON o.waiterId = w.id
-                INNER JOIN users AS u ON w.createdBy = u.id
+                LEFT JOIN waiters AS w ON o.waiterId = w.id
+                INNER JOIN users AS u ON o.createdBy = u.id
                 WHERE o.deleted = 0
                 """;
             byte[] data = Array.Empty<byte>();
@@ -46,7 +46,8 @@ namespace server.Api
                             builder.WriteString(reader.GetString(2));
                             builder.WriteString(reader.GetString(3));
                             builder.WriteString(reader.GetString(4));
-                            builder.WriteDateTime(reader.GetDateTime(5));
+                            builder.WriteString(reader.GetString(5));
+                            builder.WriteDateTime(reader.GetDateTime(6));
                         }
                         data = builder.ToArray();
                     }
@@ -73,7 +74,7 @@ namespace server.Api
                 }
             }, commandText);
             commandText = """
-                SELECT [id], [name], [streetAddress], [waiterId]
+                SELECT [id], [name], [streetAddress], [type], [waiterId]
                 FROM outlets
                 WHERE deleted = 0 AND id=@id
                 """;
@@ -86,7 +87,8 @@ namespace server.Api
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
                         Address = reader.GetString(2),
-                        Waiter = reader.GetInt32(3)
+                        Type = reader.GetInt32(3),
+                        Waiter = reader.GetInt32(4)
                     };
                 }
             }, commandText, new SqlParameter("@id", id));
@@ -95,8 +97,8 @@ namespace server.Api
         internal static async Task<IResult> CreateAsync(Outlet model, HttpContext context, DbClient db)
         {
             var commandText = """
-                INSERT INTO outlets ([name], [streetAddress], [waiterId], [createdBy])
-                VALUES (@name, @location, @waiter, @createdBy);
+                INSERT INTO outlets ([name], [streetAddress], [type], [waiterId], [createdBy])
+                VALUES (@name, @location, @type, @waiter, @createdBy);
                 SELECT SCOPE_IDENTITY()
                 """;
             var id = AppHelpers.GetUserID(context);
@@ -104,6 +106,7 @@ namespace server.Api
             {
                 new SqlParameter("@name", model.Name),
                 new SqlParameter("@location", model.Address),
+                new SqlParameter("@type", model.Type),
                 new SqlParameter("@waiter", model.Waiter),
                 new SqlParameter("@createdBy", id)
             };
@@ -114,7 +117,7 @@ namespace server.Api
         {
             var commandText = """
                 UPDATE outlets
-                SET [name]=@name, [streetAddress]=@location, [waiterId]=@waiter, editedDate=GETDATE()
+                SET [name]=@name, [streetAddress]=@location, [type]=@type, [waiterId]=@waiter, editedDate=GETDATE()
                 WHERE id=@id
                 """;
             var id = AppHelpers.GetUserID(context);
@@ -122,6 +125,7 @@ namespace server.Api
             {
                 new SqlParameter("@name", model.Name),
                 new SqlParameter("@location", model.Address),
+                new SqlParameter("@type", model.Type),
                 new SqlParameter("@waiter", model.Waiter),
                 new SqlParameter("@editedBy", id),
                 new SqlParameter("@id", model.Id)

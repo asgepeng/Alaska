@@ -174,6 +174,7 @@
             button1.Text = "Tambah Gambar";
             button1.TextImageRelation = TextImageRelation.ImageBeforeText;
             button1.UseVisualStyleBackColor = true;
+            button1.Click += HandleButtonImageClicked;
             // 
             // productImage
             // 

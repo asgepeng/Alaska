@@ -100,7 +100,7 @@ namespace server.Api
         {
             var commandText = """
                 UPDATE users 
-                SET [name] = @name, [role] = @role, [password] = HASHBYTES('SHA2_256', @password), editedBy=@editedBy
+                SET [name] = @name, [role] = @role, [password] = HASHBYTES('SHA2_256', CAST(@password AS NVARCHAR)), editedBy=@editedBy
                 WHERE [id]=@id
                 """;
             var userId = AppHelpers.GetUserID(context);

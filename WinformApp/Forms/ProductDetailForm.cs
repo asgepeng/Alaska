@@ -1,4 +1,7 @@
-﻿using Alaska.Models;
+﻿using Alaska;
+using Alaska.Data;
+using Alaska.Models;
+using AlaskaLib.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinformApp.Data;
@@ -207,10 +211,82 @@ namespace WinformApp.Forms
             FormatHelpers.FilterOnlyNumber(e);
         }
 
-        private void HandleCategoryButtonClicked(object sender, EventArgs e)
+        private async void HandleCategoryButtonClicked(object sender, EventArgs e)
         {
             CategoryForm form = new CategoryForm();
             form.ShowDialog();
+
+            var id = this.categoryComboBox.SelectedItem is null ? 0 : (int)((ProductCategory)this.categoryComboBox.SelectedItem).Id;
+            using (var builder = new CategoryTableBuilder(await HttpClientSingleton.GetStreamAsync("/master-data/categories")))
+            {
+                var table = builder.ToDataTable();
+                this.categoryComboBox.Items.Clear();
+                for (int i = 0; i < table.Rows.Count; i++)
+                {
+                    var category = new ProductCategory()
+                    {
+                        Id = (int)table.Rows[i][0],
+                        Name = table.Rows[i][1] as string ?? ""
+                    };
+                    this.categoryComboBox.Items.Add(category);
+                    if (category.Id == id) this.categoryComboBox.SelectedIndex = i;
+                }
+            }
+        }
+
+        private async void HandleButtonImageClicked(object sender, EventArgs e)
+        {
+            using var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image Files (*.jpg; *.jpeg; *.png; *.gif; *.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp",
+                Title = "Select an Image to Upload"
+            };
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                try
+                {
+                    CommonResult? result = await UploadImageAsync(filePath);
+                    if (result != null && result.Success)
+                    {
+                        this.productImage.LoadAsync(result.Message);
+                        int pos = result.Message.LastIndexOf("/");
+                        string filename = pos >= 0 ? result.Message.Substring(pos + 1) : string.Empty;
+                        if (!string.IsNullOrEmpty(filename))
+                        {
+                            this.imageIndex = this.ProductImages.Count - 1;
+                            this.ProductImages.Add(filename);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Clipboard.SetText(ex.Message);
+                    MessageBox.Show($"An error occurred: {ex.ToString()}", "Upload Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async Task<CommonResult?> UploadImageAsync(string filePath)
+        {
+            using var multipartContent = new MultipartFormDataContent();
+            using HttpClient client = new HttpClient();
+            // Add the file to the request
+            var fileContent = new StreamContent(File.OpenRead(filePath));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+            multipartContent.Add(fileContent, "file", Path.GetFileName(filePath));
+
+            // Send the POST request
+            string uploadUrl = string.Concat(My.Application.ApiUrl, "/documents/images");
+            var response = await client.PostAsync(uploadUrl, multipartContent);
+
+            // Ensure the response is successful
+            response.EnsureSuccessStatusCode();
+
+            // Read and return the response message
+            string jsonResult = await response.Content.ReadAsStringAsync();
+            CommonResult? result = JsonSerializer.Deserialize(jsonResult, AppJsonSerializerContext.Default.CommonResult);
+            return result;
         }
     }
 }

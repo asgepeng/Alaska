@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
@@ -41,8 +40,9 @@
             exitToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
             productButton = new ToolStripMenuItem();
-            outletButton = new ToolStripMenuItem();
             waiterButton = new ToolStripMenuItem();
+            outletButton = new ToolStripMenuItem();
+            costTypeButton = new ToolStripMenuItem();
             toolStripSeparator4 = new ToolStripSeparator();
             expenseButton = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
@@ -61,6 +61,7 @@
             navigator = new BindingNavigator(components);
             countLabel = new ToolStripLabel();
             refreshButton = new ToolStripButton();
+            sparator0 = new ToolStripSeparator();
             addButton = new ToolStripButton();
             deleteButton = new ToolStripButton();
             sparator1 = new ToolStripSeparator();
@@ -71,7 +72,7 @@
             nextButton = new ToolStripButton();
             lastRowButton = new ToolStripButton();
             sparator3 = new ToolStripSeparator();
-            helpToolStripButton = new ToolStripButton();
+            downloadButton = new ToolStripButton();
             childFormLabel = new ToolStripLabel();
             menuStrip1.SuspendLayout();
             m_StatusStrip.SuspendLayout();
@@ -153,7 +154,7 @@
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { productButton, outletButton, waiterButton, toolStripSeparator4, expenseButton });
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { productButton, waiterButton, outletButton, costTypeButton, toolStripSeparator4, expenseButton });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.Size = new Size(47, 21);
             editToolStripMenuItem.Text = "&Data";
@@ -163,17 +164,9 @@
             productButton.Image = Properties.Resources.icons8_product_24;
             productButton.Name = "productButton";
             productButton.ShortcutKeys = Keys.Control | Keys.Z;
-            productButton.Size = new Size(247, 22);
+            productButton.Size = new Size(192, 22);
             productButton.Text = "Data Produk";
             productButton.Click += OpenListingForm;
-            // 
-            // outletButton
-            // 
-            outletButton.Name = "outletButton";
-            outletButton.ShortcutKeys = Keys.Control | Keys.Y;
-            outletButton.Size = new Size(247, 22);
-            outletButton.Text = "Data Outlet";
-            outletButton.Click += OpenListingForm;
             // 
             // waiterButton
             // 
@@ -181,23 +174,37 @@
             waiterButton.ImageTransparentColor = Color.Magenta;
             waiterButton.Name = "waiterButton";
             waiterButton.ShortcutKeys = Keys.Control | Keys.X;
-            waiterButton.Size = new Size(247, 22);
+            waiterButton.Size = new Size(192, 22);
             waiterButton.Text = "Data Waiter";
             waiterButton.Click += OpenListingForm;
+            // 
+            // outletButton
+            // 
+            outletButton.Name = "outletButton";
+            outletButton.ShortcutKeys = Keys.Control | Keys.Y;
+            outletButton.Size = new Size(192, 22);
+            outletButton.Text = "Data Outlet";
+            outletButton.Click += OpenListingForm;
+            // 
+            // costTypeButton
+            // 
+            costTypeButton.Name = "costTypeButton";
+            costTypeButton.Size = new Size(192, 22);
+            costTypeButton.Text = "Kategori Biaya";
+            costTypeButton.Click += OpenListingForm;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(244, 6);
+            toolStripSeparator4.Size = new Size(189, 6);
             // 
             // expenseButton
             // 
             expenseButton.ImageTransparentColor = Color.Magenta;
             expenseButton.Name = "expenseButton";
-            expenseButton.ShortcutKeys = Keys.Control | Keys.C;
-            expenseButton.Size = new Size(247, 22);
-            expenseButton.Text = "Kategori Pengeluaran";
-            expenseButton.Click += OpenListingForm;
+            expenseButton.Size = new Size(192, 22);
+            expenseButton.Text = "Reset Data";
+            expenseButton.Click += OpenCategoryProduct;
             // 
             // toolsToolStripMenuItem
             // 
@@ -260,6 +267,7 @@
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(120, 22);
             aboutToolStripMenuItem.Text = "&About...";
+            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // m_StatusStrip
             // 
@@ -298,7 +306,7 @@
             navigator.CountItem = countLabel;
             navigator.DeleteItem = null;
             navigator.ImageScalingSize = new Size(24, 24);
-            navigator.Items.AddRange(new ToolStripItem[] { refreshButton, addButton, deleteButton, sparator1, firstRowButton, previousRowButton, sparator2, positionTextBox, countLabel, nextButton, lastRowButton, sparator3, helpToolStripButton, childFormLabel });
+            navigator.Items.AddRange(new ToolStripItem[] { refreshButton, sparator0, addButton, deleteButton, sparator1, firstRowButton, previousRowButton, sparator2, positionTextBox, countLabel, nextButton, lastRowButton, sparator3, downloadButton, childFormLabel });
             navigator.Location = new Point(0, 25);
             navigator.MoveFirstItem = firstRowButton;
             navigator.MoveLastItem = previousRowButton;
@@ -326,6 +334,11 @@
             refreshButton.Size = new Size(74, 28);
             refreshButton.Text = "Refresh";
             refreshButton.Click += RefreshListing;
+            // 
+            // sparator0
+            // 
+            sparator0.Name = "sparator0";
+            sparator0.Size = new Size(6, 31);
             // 
             // addButton
             // 
@@ -407,14 +420,14 @@
             sparator3.Name = "sparator3";
             sparator3.Size = new Size(6, 31);
             // 
-            // helpToolStripButton
+            // downloadButton
             // 
-            helpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            helpToolStripButton.Image = (Image)resources.GetObject("helpToolStripButton.Image");
-            helpToolStripButton.ImageTransparentColor = Color.Magenta;
-            helpToolStripButton.Name = "helpToolStripButton";
-            helpToolStripButton.Size = new Size(28, 28);
-            helpToolStripButton.Text = "He&lp";
+            downloadButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            downloadButton.Image = Properties.Resources.download;
+            downloadButton.ImageTransparentColor = Color.Magenta;
+            downloadButton.Name = "downloadButton";
+            downloadButton.Size = new Size(28, 28);
+            downloadButton.Text = "Download";
             // 
             // childFormLabel
             // 
@@ -488,12 +501,14 @@
         private ToolStripButton nextButton;
         private ToolStripButton lastRowButton;
         private ToolStripSeparator sparator3;
-        private ToolStripButton helpToolStripButton;
+        private ToolStripButton downloadButton;
         private ToolStripLabel childFormLabel;
         private ToolStripTextBox positionTextBox;
         private ToolStripLabel countLabel;
         private ToolStripButton refreshButton;
         private ToolStripSeparator sparator1;
         private ToolStripMenuItem ubahPasswordToolStripMenuItem;
+        private ToolStripSeparator sparator0;
+        private ToolStripMenuItem costTypeButton;
     }
 }

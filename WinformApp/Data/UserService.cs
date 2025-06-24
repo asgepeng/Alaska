@@ -13,6 +13,7 @@ namespace WinformApp.Data
         Task<object?> CreateAsync(object model);
         Task<CommonResult> UpdateAsync(object model);
         Task<CommonResult> DeleteAsync(int id);
+        Period Period { get; set; }
     }
     internal class UserService
     {

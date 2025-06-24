@@ -43,13 +43,15 @@ app.MapAuthentications();
 
 app.MapRoleEndPoints();
 app.MapUserEndPoints();
+app.MapCategoryEndPoints();
 app.MapProductEndPoints();
 app.MapOutletEndPoints();
 app.MapWaiterEndPoints();
 app.MapSaleEndPoints();
 app.MapCashflowEndPoints();
 app.MapHomeEndPoints();
-
+app.MapDocumentEndPoints();
+app.MapExpenseCategoryEndPoints();
 app.InitializeDatabase();
 
 app.Run();

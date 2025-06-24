@@ -9,6 +9,7 @@ namespace WinformApp.Data
 {
     internal class OutletService : IService
     {
+        public Period Period { get; set; } = new Period();
         public async Task<object?> CreateAsync(object model)
         {
             Outlet outlet = (Outlet)model;
@@ -54,6 +55,7 @@ namespace WinformApp.Data
             AddColumn("id", typeof(int));
             AddColumn("name", typeof(string));
             AddColumn("location", typeof(string));
+            AddColumn("type", typeof(string));
             AddColumn("waiter", typeof(string));
             AddColumn("createdBy", typeof(string));
             AddColumn("createdDate", typeof(DateTime));
@@ -63,6 +65,7 @@ namespace WinformApp.Data
                 var values = new object[]
                 {
                     ReadInt32(),
+                    ReadString(),
                     ReadString(),
                     ReadString(),
                     ReadString(),

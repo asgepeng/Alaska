@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "server", "server\server.csproj", "{A8EEB2BD-BE71-4CFF-92EB-82B3C8C99ADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "server", "server\server.csproj", "{A8EEB2BD-BE71-4CFF-92EB-82B3C8C99ADB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B514752B-5687-41E4-8EC5-4020E2254A91} = {B514752B-5687-41E4-8EC5-4020E2254A91}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinformApp", "WinformApp\WinformApp.csproj", "{94933768-ABEB-4B54-87FA-3D5CB44DFB19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinformApp", "WinformApp\WinformApp.csproj", "{94933768-ABEB-4B54-87FA-3D5CB44DFB19}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B514752B-5687-41E4-8EC5-4020E2254A91} = {B514752B-5687-41E4-8EC5-4020E2254A91}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlaskaLib", "AlaskaLib\AlaskaLib.csproj", "{B514752B-5687-41E4-8EC5-4020E2254A91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlaskaLib", "AlaskaLib\AlaskaLib.csproj", "{B514752B-5687-41E4-8EC5-4020E2254A91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dbremover", "dbremover\dbremover.csproj", "{22D84751-30D8-4E14-9C32-471589B25333}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B514752B-5687-41E4-8EC5-4020E2254A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B514752B-5687-41E4-8EC5-4020E2254A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B514752B-5687-41E4-8EC5-4020E2254A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D84751-30D8-4E14-9C32-471589B25333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D84751-30D8-4E14-9C32-471589B25333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D84751-30D8-4E14-9C32-471589B25333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D84751-30D8-4E14-9C32-471589B25333}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

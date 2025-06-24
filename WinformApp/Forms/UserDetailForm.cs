@@ -42,13 +42,13 @@ namespace WinformApp.Forms
                 textBox2.Focus();
                 return;
             }
-            if (textBox3.Text == "")
+            if (User is null) User = new User();
+            if (textBox3.Text == "" && User is null)
             {
                 MessageBox.Show("Password tidak boleh kosong", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 textBox3.Focus();
                 return;
             }
-            if (User is null) User = new User();
             User.Name = textBox1.Text.Trim();
             User.RoleId = ((DropdownOption)this.comboBox1.SelectedItem).Id;
             User.Login = this.textBox2.Text.Trim();
@@ -103,6 +103,8 @@ namespace WinformApp.Forms
                 this.textBox2.Text = uvm.User.Login;
                 this.textBox2.ReadOnly = uvm.User.Id == 1;
                 this.SaveButton.Enabled = uvm.User.Id != 1;
+                this.User = uvm.User;
+                this.label5.Visible = this.User.Id > 0;
             }
         }
 

@@ -36,7 +36,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 54);
+            label1.Location = new Point(25, 36);
             label1.Name = "label1";
             label1.Size = new Size(43, 17);
             label1.TabIndex = 0;
@@ -44,14 +44,14 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(12, 74);
+            textBox1.Location = new Point(25, 56);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(360, 25);
+            textBox1.Size = new Size(280, 25);
             textBox1.TabIndex = 1;
             // 
             // saveButton
             // 
-            saveButton.Location = new Point(272, 139);
+            saveButton.Location = new Point(205, 127);
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(100, 30);
             saveButton.TabIndex = 2;
@@ -63,7 +63,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 181);
+            ClientSize = new Size(334, 181);
             Controls.Add(saveButton);
             Controls.Add(textBox1);
             Controls.Add(label1);
@@ -72,6 +72,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "RoleDetailForm";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Role Detail";
             Load += HandleFormLoad;
             ResumeLayout(false);

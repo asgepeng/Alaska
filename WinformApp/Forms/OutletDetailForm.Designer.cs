@@ -35,37 +35,39 @@
             label3 = new Label();
             waiterComboBox = new ComboBox();
             loginButton = new Button();
+            comboBox1 = new ComboBox();
+            label4 = new Label();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 9);
+            label1.Location = new Point(12, 19);
             label1.Name = "label1";
             label1.Size = new Size(43, 17);
             label1.TabIndex = 0;
             label1.Text = "Nama";
             // 
-            // textBox1
+            // nameTextBox
             // 
-            nameTextBox.Location = new Point(12, 29);
-            nameTextBox.Name = "textBox1";
+            nameTextBox.Location = new Point(12, 39);
+            nameTextBox.Name = "nameTextBox";
             nameTextBox.Size = new Size(310, 25);
-            nameTextBox.TabIndex = 1;
+            nameTextBox.TabIndex = 0;
             // 
-            // textBox2
+            // addressTextBox
             // 
-            addressTextBox.Location = new Point(12, 77);
+            addressTextBox.Location = new Point(12, 87);
             addressTextBox.Multiline = true;
-            addressTextBox.Name = "textBox2";
+            addressTextBox.Name = "addressTextBox";
             addressTextBox.ScrollBars = ScrollBars.Both;
             addressTextBox.Size = new Size(310, 51);
-            addressTextBox.TabIndex = 3;
+            addressTextBox.TabIndex = 1;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 57);
+            label2.Location = new Point(12, 67);
             label2.Name = "label2";
             label2.Size = new Size(44, 17);
             label2.TabIndex = 2;
@@ -74,20 +76,20 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(12, 131);
+            label3.Location = new Point(12, 188);
             label3.Name = "label3";
-            label3.Size = new Size(43, 17);
+            label3.Size = new Size(45, 17);
             label3.TabIndex = 4;
-            label3.Text = "Nama";
+            label3.Text = "Waiter";
             // 
-            // comboBox1
+            // waiterComboBox
             // 
             waiterComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             waiterComboBox.FormattingEnabled = true;
-            waiterComboBox.Location = new Point(12, 151);
-            waiterComboBox.Name = "comboBox1";
+            waiterComboBox.Location = new Point(12, 208);
+            waiterComboBox.Name = "waiterComboBox";
             waiterComboBox.Size = new Size(310, 25);
-            waiterComboBox.TabIndex = 5;
+            waiterComboBox.TabIndex = 3;
             // 
             // loginButton
             // 
@@ -95,19 +97,40 @@
             loginButton.FlatAppearance.BorderSize = 0;
             loginButton.FlatStyle = FlatStyle.Flat;
             loginButton.ForeColor = Color.White;
-            loginButton.Location = new Point(10, 205);
+            loginButton.Location = new Point(12, 263);
             loginButton.Name = "loginButton";
             loginButton.Size = new Size(312, 36);
-            loginButton.TabIndex = 9;
+            loginButton.TabIndex = 4;
             loginButton.Text = "Simpan";
             loginButton.UseVisualStyleBackColor = false;
             loginButton.Click += HandleLoginButtonClick;
+            // 
+            // comboBox1
+            // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Internal", "Mitra" });
+            comboBox1.Location = new Point(12, 161);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(310, 25);
+            comboBox1.TabIndex = 2;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(12, 141);
+            label4.Name = "label4";
+            label4.Size = new Size(35, 17);
+            label4.TabIndex = 10;
+            label4.Text = "Type";
             // 
             // OutletDetailForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(334, 253);
+            ClientSize = new Size(334, 311);
+            Controls.Add(comboBox1);
+            Controls.Add(label4);
             Controls.Add(loginButton);
             Controls.Add(waiterComboBox);
             Controls.Add(label3);
@@ -116,9 +139,11 @@
             Controls.Add(nameTextBox);
             Controls.Add(label1);
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "OutletDetailForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "OutletForm";
+            Text = "Outlet";
             Load += FormLoadHandler;
             ResumeLayout(false);
             PerformLayout();
@@ -133,5 +158,7 @@
         private Label label3;
         private ComboBox waiterComboBox;
         private Button loginButton;
+        private ComboBox comboBox1;
+        private Label label4;
     }
 }

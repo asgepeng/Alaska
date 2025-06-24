@@ -10,6 +10,7 @@ namespace WinformApp.Data
 {
     internal class IncomeService : IService
     {
+        public Period Period { get; set; } = new Period();
         public Task<object?> CreateAsync(object model)
         {
             throw new NotImplementedException();
