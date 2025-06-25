@@ -49,7 +49,8 @@ namespace WinformApp.Forms
                     this.Text = "Daftar Waiter";
                     break;
                 case ListingType.Sales:
-                    this.Text = "Laporan Penjualan Harian";
+                    this.Text = "Penjualan";
+                    this.panel1.BackColor = Color.Green;
                     break;
                 case ListingType.CashFlow:
                     this.Text = "Laporan Arus Kas";
@@ -66,7 +67,7 @@ namespace WinformApp.Forms
             if (Type == ListingType.CashFlow)
             {
                 label3.Text = "Kas Masuk";
-                label4.Text = "Kasu Keluar";
+                label4.Text = "Kas Keluar";
                 label5.Text = "Saldo Akhir";
             }
         }
@@ -276,22 +277,19 @@ namespace WinformApp.Forms
             };
         }
 
-        private async void HandleDataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void HandleDataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             if (e.ListChangedType == ListChangedType.PropertyDescriptorChanged)
             {
                 if (Type == ListingType.Sales)
                 {
                     double income = 0, expenxe = 0, balance = 0;
-                    await Task.Run(() =>
+                    foreach (DataGridViewRow row in this.grid.Rows)
                     {
-                        foreach (DataGridViewRow row in this.grid.Rows)
-                        {
-                            income += (double)row.Cells[2].Value;
-                            expenxe += (double)row.Cells[3].Value;
-                            balance += (double)row.Cells[4].Value;
-                        }
-                    });
+                        income += (double)row.Cells[2].Value;
+                        expenxe += (double)row.Cells[3].Value;
+                        balance += (double)row.Cells[4].Value;
+                    }
                     label8.Text = "Rp" + income.ToString("N0");
                     label7.Text = "Rp" + expenxe.ToString("N0");
                     label6.Text = "Rp" + balance.ToString("N0");
@@ -300,15 +298,12 @@ namespace WinformApp.Forms
                 if (Type == ListingType.CashFlow)
                 {
                     double income = 0, expense = 0, balance = 0;
-                    await Task.Run(() =>
+                    foreach (DataGridViewRow row in this.grid.Rows)
                     {
-                        foreach (DataGridViewRow row in this.grid.Rows)
-                        {
-                            income += (double)row.Cells[1].Value;
-                            expense += (double)row.Cells[2].Value;
-                            balance += (double)row.Cells[3].Value;
-                        }
-                    });
+                        income += (double)row.Cells[1].Value;
+                        expense += (double)row.Cells[2].Value;
+                    }
+                    balance = income - expense;
                     label8.Text = "Rp" + income.ToString("N0");
                     label7.Text = "Rp" + expense.ToString("N0");
                     label6.Text = "Rp" + balance.ToString("N0");
@@ -322,12 +317,26 @@ namespace WinformApp.Forms
             dialog.Filter = "Excel Workbook(*.xlsx)|*.xlsx";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var json = JsonSerializer.Serialize(CreatePeriod(), AppJsonSerializerContext.Default.Period);
-                using (var stream = await HttpClientSingleton.PostStreamAsync("/trans/sales/export", json))
+                if (Type == ListingType.Sales)
                 {
-                    using (var fs = new FileStream(dialog.FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    var json = JsonSerializer.Serialize(CreatePeriod(), AppJsonSerializerContext.Default.Period);
+                    using (var stream = await HttpClientSingleton.PostStreamAsync("/trans/sales/export", json))
                     {
-                        await stream.CopyToAsync(fs);
+                        using (var fs = new FileStream(dialog.FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                        {
+                            await stream.CopyToAsync(fs);
+                        }
+                    }
+                }
+                else if (Type == ListingType.CashFlow)
+                {
+                    var json = JsonSerializer.Serialize(CreatePeriod(), AppJsonSerializerContext.Default.Period);
+                    using (var stream = await HttpClientSingleton.PostStreamAsync("/reports/cashflows/export", json))
+                    {
+                        using (var fs = new FileStream(dialog.FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                        {
+                            await stream.CopyToAsync(fs);
+                        }
                     }
                 }
                 if (File.Exists(dialog.FileName))

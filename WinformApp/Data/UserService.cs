@@ -20,7 +20,6 @@ namespace WinformApp.Data
         public async Task<bool> CreateAsync(User model)
         {
             var json = await HttpClientSingleton.PostAsync("/user-manager", JsonSerializer.Serialize(model, AppJsonSerializerContext.Default.User));
-            MessageBox.Show(json);
             return json.Trim() == "true";
         }
 

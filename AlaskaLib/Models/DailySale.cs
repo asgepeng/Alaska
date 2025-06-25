@@ -17,13 +17,11 @@ namespace AlaskaLib.Models
         public DateTime Date { get; set; } = DateTime.Now;
         [JsonPropertyName("cashinId")] public int CashinId { get; set; } = 0;
         [JsonPropertyName("cashoutId")] public int CashoutId { get; set; } = 0;
-        [JsonPropertyName("totalExpense")] public double TotalExpense { get; set; } = 0;
-
         [JsonPropertyName("notes")]
         public string Notes { get; set; } = "";
         [JsonPropertyName("items")]
         public List<DailySalesItem> Items { get; set; } = new List<DailySalesItem>();
-        public List<DailyExpenseItem> Expenses { get; set; } = new List<DailyExpenseItem>();
+        [JsonPropertyName("expenses")]public List<DailyExpenseItem> Expenses { get; set; } = new List<DailyExpenseItem>();
         public (double totalIncome, double totalExpense) Calculate()
         {
             double totalIncome = 0, totalExpense = 0;

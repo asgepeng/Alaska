@@ -35,12 +35,6 @@
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             label1 = new Label();
             dataGridView1 = new DataGridView();
-            outletIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            outletNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            OutletType = new DataGridViewTextBoxColumn();
-            waiterNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            notesDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            incomeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             dailySalesItemBindingSource = new BindingSource(components);
             incomeLabel = new Label();
             expenseLabel = new Label();
@@ -55,6 +49,12 @@
             label2 = new Label();
             dateTimePicker1 = new DateTimePicker();
             button3 = new Button();
+            outletIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            outletNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            OutletType = new DataGridViewTextBoxColumn();
+            waiterNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            notesDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            incomeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dailySalesItemBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -96,61 +96,6 @@
             dataGridView1.CellEndEdit += HandleDataGridCellEndEdit;
             dataGridView1.DataBindingComplete += HandleDataBindingComplete;
             dataGridView1.DataError += dataGridView1_DataError;
-            // 
-            // outletIdDataGridViewTextBoxColumn
-            // 
-            outletIdDataGridViewTextBoxColumn.DataPropertyName = "OutletId";
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(255, 255, 192);
-            dataGridViewCellStyle1.Format = "000000";
-            outletIdDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
-            outletIdDataGridViewTextBoxColumn.HeaderText = "Kode";
-            outletIdDataGridViewTextBoxColumn.Name = "outletIdDataGridViewTextBoxColumn";
-            outletIdDataGridViewTextBoxColumn.ReadOnly = true;
-            outletIdDataGridViewTextBoxColumn.Width = 60;
-            // 
-            // outletNameDataGridViewTextBoxColumn
-            // 
-            outletNameDataGridViewTextBoxColumn.DataPropertyName = "OutletName";
-            dataGridViewCellStyle2.BackColor = SystemColors.ButtonFace;
-            outletNameDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            outletNameDataGridViewTextBoxColumn.HeaderText = "Nama Outlet";
-            outletNameDataGridViewTextBoxColumn.Name = "outletNameDataGridViewTextBoxColumn";
-            outletNameDataGridViewTextBoxColumn.ReadOnly = true;
-            outletNameDataGridViewTextBoxColumn.Width = 200;
-            // 
-            // OutletType
-            // 
-            OutletType.DataPropertyName = "OutletType";
-            OutletType.HeaderText = "Tipe Outlet";
-            OutletType.Name = "OutletType";
-            OutletType.ReadOnly = true;
-            // 
-            // waiterNameDataGridViewTextBoxColumn
-            // 
-            waiterNameDataGridViewTextBoxColumn.DataPropertyName = "WaiterName";
-            dataGridViewCellStyle3.BackColor = SystemColors.ButtonFace;
-            waiterNameDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle3;
-            waiterNameDataGridViewTextBoxColumn.HeaderText = "Nama Waiter";
-            waiterNameDataGridViewTextBoxColumn.Name = "waiterNameDataGridViewTextBoxColumn";
-            waiterNameDataGridViewTextBoxColumn.ReadOnly = true;
-            waiterNameDataGridViewTextBoxColumn.Width = 200;
-            // 
-            // notesDataGridViewTextBoxColumn
-            // 
-            notesDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            notesDataGridViewTextBoxColumn.DataPropertyName = "Notes";
-            notesDataGridViewTextBoxColumn.HeaderText = "Catatan";
-            notesDataGridViewTextBoxColumn.Name = "notesDataGridViewTextBoxColumn";
-            // 
-            // incomeDataGridViewTextBoxColumn
-            // 
-            incomeDataGridViewTextBoxColumn.DataPropertyName = "Income";
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Format = "N0";
-            incomeDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle4;
-            incomeDataGridViewTextBoxColumn.HeaderText = "Pemasukan";
-            incomeDataGridViewTextBoxColumn.Name = "incomeDataGridViewTextBoxColumn";
             // 
             // dailySalesItemBindingSource
             // 
@@ -309,6 +254,61 @@
             button3.UseVisualStyleBackColor = false;
             button3.Click += HandleButtonExpenseClicked;
             // 
+            // outletIdDataGridViewTextBoxColumn
+            // 
+            outletIdDataGridViewTextBoxColumn.DataPropertyName = "OutletId";
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(255, 255, 192);
+            dataGridViewCellStyle1.Format = "000000";
+            outletIdDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            outletIdDataGridViewTextBoxColumn.HeaderText = "Kode";
+            outletIdDataGridViewTextBoxColumn.Name = "outletIdDataGridViewTextBoxColumn";
+            outletIdDataGridViewTextBoxColumn.ReadOnly = true;
+            outletIdDataGridViewTextBoxColumn.Width = 60;
+            // 
+            // outletNameDataGridViewTextBoxColumn
+            // 
+            outletNameDataGridViewTextBoxColumn.DataPropertyName = "OutletName";
+            dataGridViewCellStyle2.BackColor = SystemColors.ButtonFace;
+            outletNameDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            outletNameDataGridViewTextBoxColumn.HeaderText = "Nama Outlet";
+            outletNameDataGridViewTextBoxColumn.Name = "outletNameDataGridViewTextBoxColumn";
+            outletNameDataGridViewTextBoxColumn.ReadOnly = true;
+            outletNameDataGridViewTextBoxColumn.Width = 200;
+            // 
+            // OutletType
+            // 
+            OutletType.DataPropertyName = "OutletType";
+            OutletType.HeaderText = "Tipe Outlet";
+            OutletType.Name = "OutletType";
+            OutletType.ReadOnly = true;
+            // 
+            // waiterNameDataGridViewTextBoxColumn
+            // 
+            waiterNameDataGridViewTextBoxColumn.DataPropertyName = "WaiterName";
+            dataGridViewCellStyle3.BackColor = SystemColors.ButtonFace;
+            waiterNameDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle3;
+            waiterNameDataGridViewTextBoxColumn.HeaderText = "Nama Waiter";
+            waiterNameDataGridViewTextBoxColumn.Name = "waiterNameDataGridViewTextBoxColumn";
+            waiterNameDataGridViewTextBoxColumn.ReadOnly = true;
+            waiterNameDataGridViewTextBoxColumn.Width = 200;
+            // 
+            // notesDataGridViewTextBoxColumn
+            // 
+            notesDataGridViewTextBoxColumn.DataPropertyName = "Notes";
+            notesDataGridViewTextBoxColumn.HeaderText = "Catatan";
+            notesDataGridViewTextBoxColumn.Name = "notesDataGridViewTextBoxColumn";
+            notesDataGridViewTextBoxColumn.Width = 200;
+            // 
+            // incomeDataGridViewTextBoxColumn
+            // 
+            incomeDataGridViewTextBoxColumn.DataPropertyName = "Income";
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N0";
+            incomeDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle4;
+            incomeDataGridViewTextBoxColumn.HeaderText = "Pemasukan";
+            incomeDataGridViewTextBoxColumn.Name = "incomeDataGridViewTextBoxColumn";
+            // 
             // EntryDataForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -358,12 +358,12 @@
         private TextBox notesTextBox;
         private Label label2;
         private DateTimePicker dateTimePicker1;
+        private Button button3;
         private DataGridViewTextBoxColumn outletIdDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn outletNameDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn OutletType;
         private DataGridViewTextBoxColumn waiterNameDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn notesDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn incomeDataGridViewTextBoxColumn;
-        private Button button3;
     }
 }

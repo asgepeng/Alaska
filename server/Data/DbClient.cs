@@ -77,7 +77,6 @@ namespace Alaska.Data
                     }
                     catch (Exception ex)
                     {
-                        System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\sql_error.txt", ex.Message);
                     }
                     finally
                     {
@@ -122,7 +121,6 @@ namespace Alaska.Data
                 }
                 catch (Exception ex)
                 {
-                    System.IO.File.WriteAllText(AppContext.BaseDirectory + "\\sql_error_non_query.txt", commandText + "\n" + DateTime.Now + "\n" + ex.ToString());
                     return false;
                 }
                 finally
@@ -150,7 +148,7 @@ namespace Alaska.Data
                 }
                 catch (Exception ex)
                 {
-                    File.AppendAllText("E:\\Alaska\\bin\\error.log", ex.ToString());
+                    Console.WriteLine(ex);
                 }
                 finally
                 {

@@ -27,14 +27,15 @@ namespace server.Api
             app.MapDelete("/trans/sales-delete/{id}", DeleteAsync).RequireAuthorization();
             app.MapPost("/trans/sales-check", CheckIfExistAsync).RequireAuthorization();
             app.MapPost("/trans/sales/export", ExportSalesReport).RequireAuthorization();
+            app.MapGet("/trans/sales/expense-categories", GetExpenseCategories).RequireAuthorization();
         }
         internal static async Task<IResult> GetDataTableAsync(Period periode, DbClient db)
         {
             var commandText = """
-                SELECT ds.[id], ds.[date], cashIn.credit, cashOut.debt, ds.notes, u.[name] AS creator, ds.createdDate
+                SELECT ds.[id], ds.[date], ISNULL(cashIn.credit, CAST(0 AS FLOAT)) AS credit, ISNULL(cashOut.debt, CAST(0 AS FLOAT)) AS debt, ds.notes, u.[name] AS creator, ds.createdDate
                 FROM dailySales As ds
-                INNER JOIN cashflows AS cashIn ON ds.cashIn = cashIn.id
-                INNER JOIN cashflows AS cashOut ON ds.cashOut = cashOut.id
+                LEFT JOIN cashflows AS cashIn ON ds.cashIn = cashIn.id
+                LEFT JOIN cashflows AS cashOut ON ds.cashOut = cashOut.id
                 INNER JOIN users AS u ON ds.creator = u.id
                 WHERE ds.createdDate BETWEEN @from AND @to
                 """;
@@ -106,7 +107,7 @@ namespace server.Api
                 }
             }, commandText, new SqlParameter("@id", id));
             commandText = """
-                SELECT id, [expenseId], [costType], [costAmount]
+                SELECT id, [costType], [costAmount]
                 FROM dailyExpenses
                 WHERE dailySale = @id
                 """;
@@ -132,11 +133,51 @@ namespace server.Api
             var commandText = "";
             if (model.Id > 0)
             {
-                commandText = """
-                    UPDATE dailySales SET notes = @notes WHERE id=@id;
-                    UPDATE cashflows SET credit = @credit WHERE id=@cashinId;
-                    UPDATE cashflows SET debt = @debt WHERE id=@cashoutId;
-                    """;
+                if (totalIncome == 0 && model.CashinId > 0)
+                {
+                    await db.ExecuteNonQueryAsync("DELETE FROM cashflows WHERE id=@id;UPDATE dailySales SET cashIn = 0 WHERE id=@saleID", new SqlParameter("@id", model.CashinId), new SqlParameter("@saleID", model.Id));
+                }
+                else
+                {
+                    if (totalIncome > 0 && model.CashinId == 0)
+                    {
+                        await db.ExecuteScalarIntegerAsync("INSERT INTO cashflows ([date], [debt], [credit], [notes], [creator]) VALUES (@date, 0, @credit, 'Penjualan', @creator); UPDATE dailySales SET cashIn = (SELECT SCOPE_IDENTITY()) WHERE id=@id;",
+                        new SqlParameter[]
+                        {
+                            new SqlParameter("@date", model.Date),
+                            new SqlParameter("@credit", totalIncome),
+                            new SqlParameter("@creator", userID),
+                            new SqlParameter("@id", model.Id)
+                        });
+                    }
+                    else
+                    {
+                        await db.ExecuteNonQueryAsync("UPDATE cashflows SET credit = @value WHERE id=@id", new SqlParameter("@id", model.CashinId), new SqlParameter("@value", totalIncome));
+                    }
+                }
+                if (totalExpense == 0 && model.CashoutId > 0)
+                {
+                    await db.ExecuteNonQueryAsync("DELETE FROM cashflows WHERE id=@id;UPDATE dailySales SET cashOut = 0 WHERE id=@saleID;", new SqlParameter("@id", model.CashoutId), new SqlParameter("@saleID", model.Id));
+                }
+                else
+                {
+                    if (totalExpense > 0 && model.CashoutId == 0)
+                    {
+                        await db.ExecuteScalarIntegerAsync("INSERT INTO cashflows ([date], [debt], [credit], [notes], [creator]) VALUES (@date, @debt, 0, 'Biaya Operasional', @creator); UPDATE dailySales SET cashOut = (SELECT SCOPE_IDENTITY()) WHERE id=@id;",
+                        new SqlParameter[]
+                        {
+                            new SqlParameter("@date", model.Date.AddSeconds(1)),
+                            new SqlParameter("@debt", totalExpense),
+                            new SqlParameter("@creator", userID),
+                            new SqlParameter("@id", model.Id)
+                        });
+                    }
+                    else
+                    {
+                        await db.ExecuteNonQueryAsync("UPDATE cashflows SET debt = @value WHERE id=@id", new SqlParameter("@id", model.CashoutId), new SqlParameter("@value", totalExpense));
+                    }
+                }
+                commandText = "UPDATE dailySales SET notes = @notes WHERE id=@id; ";
                 foreach (var item in model.Items)
                 {
                     if (item.Id > 0)
@@ -152,13 +193,27 @@ namespace server.Api
                             """;
                     }
                 }
+                commandText += "DELETE FROM dailyExpenses WHERE dailySale = @id;";
+                if (model.Expenses.Count > 0)
+                {
+                    commandText += """
+                        INSERT INTO dailyExpenses (dailySale, costType, costAmount)
+                        VALUES
+                        """;
+                    var rows = new List<string>();
+                    foreach (DailyExpenseItem item in model.Expenses)
+                    {
+                        var cells = new string[3];
+                        cells[0] = "@id";
+                        cells[1] = item.ExpenseId.ToString();
+                        cells[2] = item.Amount.ToString("0");
+                        rows.Add("(" + string.Join(",", cells) + ")");
+                    }
+                    commandText += string.Join(",", rows);
+                }
 
                 var result = await db.ExecuteNonQueryAsync(commandText, new SqlParameter[]
                 {
-                    new SqlParameter("@credit", totalIncome),
-                    new SqlParameter("@debt", totalExpense),
-                    new SqlParameter("@cashinId", model.CashinId),
-                    new SqlParameter("@cashoutId", model.CashoutId),
                     new SqlParameter("@notes", model.Notes),
                     new SqlParameter("@id", model.Id)
                 });
@@ -166,17 +221,32 @@ namespace server.Api
             }
             else
             {
+                int cashinId = 0, cashoutid = 0;
+                if (totalIncome > 0)
+                {
+                    cashinId = await db.ExecuteScalarIntegerAsync("INSERT INTO cashflows ([date], [debt], [credit], [notes], [creator]) VALUES (@date, 0, @credit, 'Penjualan', @creator); SELECT SCOPE_IDENTITY()", 
+                    new SqlParameter[]
+                    {
+                        new SqlParameter("@date", model.Date),
+                        new SqlParameter("@credit", totalIncome),
+                        new SqlParameter("@creator", userID)
+                    });
+                }
+                if (totalExpense > 0)
+                {
+                    cashoutid = await db.ExecuteScalarIntegerAsync("INSERT INTO cashflows ([date], [debt], [credit], [notes], [creator]) VALUES (@date, @debt, 0, 'Biaya Operasional', @creator); SELECT SCOPE_IDENTITY()",
+                    new SqlParameter[]
+                    {
+                        new SqlParameter("@date", model.Date.AddSeconds(1)),
+                        new SqlParameter("@debt", totalExpense),
+                        new SqlParameter("@creator", userID)
+                    });
+                }
                 commandText = """
-                    INSERT INTO dailySales ([date], [notes], [creator])
-                    VALUES (@date, @notes, @creator);
+                    INSERT INTO dailySales ([date], [notes], [cashIn], [cashOut], [creator])
+                    VALUES (@date, @notes, @cashin, @cashout, @creator);
                     DECLARE @saleID INT;
                     SET @saleID = SCOPE_IDENTITY();
-                    INSERT INTO cashflows ([date], [debt], [credit], [notes], [creator])
-                    VALUES (@date, 0, @credit, 'Laporan pemasukan harian', @creator);
-                    UPDATE dailySales SET cashIn = (SELECT SCOPE_IDENTITY()) WHERE id=@saleID;
-                    INSERT INTO cashflows ([date], [debt], [credit], [notes], [creator])
-                    VALUES (@date, @debt, 0, 'Laporan pengeluaran harian', @creator);
-                    UPDATE dailySales SET cashOut = (SELECT SCOPE_IDENTITY()) WHERE id=@saleID;
                     INSERT INTO dailySaleItems
                     ([dailySale], [outlet], [waiter], [income], [expense], [notes])
                     VALUES
@@ -193,16 +263,30 @@ namespace server.Api
                     cells[5] = "'" + item.Notes.Replace("'", "''") + "'";
                     rows.Add("(" + string.Join(",", cells) + ")");
                 }
-                commandText += string.Join(",", rows);
+                commandText += string.Join(",", rows) + "; ";
 
                 var parameters = new SqlParameter[]
                 {
                     new SqlParameter("@date", model.Date),
                     new SqlParameter("@notes", model.Notes),
                     new SqlParameter("@creator", userID),
-                    new SqlParameter("@credit", totalIncome),
-                    new SqlParameter("@debt", totalExpense)
+                    new SqlParameter("@cashin", cashinId),
+                    new SqlParameter("@cashout", cashoutid)
                 };
+                rows.Clear();
+                if (model.Expenses.Count > 0)
+                {
+                    commandText += "INSERT INTO dailyExpenses ([dailySale], [costType], [costAmount]) VALUES ";
+                    var excells = new string[3];
+                    excells[0] = "@saleID";
+                    foreach (var item in model.Expenses)
+                    {
+                        excells[1] = item.ExpenseId.ToString();
+                        excells[2] = item.Amount.ToString("0");
+                        rows.Add("(" + string.Join(",", excells) + ")");
+                    }
+                    commandText += string.Join(",", rows);
+                }
                 var success = await db.ExecuteNonQueryAsync(commandText, parameters);
                 return Results.Ok(success);
             }
@@ -242,14 +326,20 @@ DELETE FROM dailySales WHERE id=@id;";
                 workbookPart.Workbook = new Workbook();
                 var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
                 var sheetData = new SheetData();
-                worksheetPart.Worksheet = new Worksheet(sheetData);
+                var columns = ExcelHelper.CreateColumnWidths(15, 20, 20, 12, 12, 12, 30);
+
+                var worksheet = new Worksheet();
+                worksheet.Append(columns);     // kolom dulu
+                worksheet.Append(sheetData);   // baru data
+
+                worksheetPart.Worksheet = worksheet;
 
                 var sheets = workbookPart.Workbook.AppendChild(new Sheets());
                 sheets.Append(new Sheet
                 {
                     Id = workbookPart.GetIdOfPart(worksheetPart),
                     SheetId = 1,
-                    Name = "Laporan"
+                    Name = "Penjualan"
                 });
 
                 ExcelHelper.AddStyles(workbookPart);
@@ -261,30 +351,34 @@ DELETE FROM dailySales WHERE id=@id;";
                 rowIndex++;
 
                 sheetData.Append(ExcelHelper.CreateRow(rowIndex++,
-                    ("Tanggal", 1, CellValues.String), ("Nama Outlet", 1, CellValues.String),
-                    ("Tipe Outlet", 1, CellValues.String), ("Pemasukan", 1, CellValues.String),
-                    ("Pengeluaran", 1, CellValues.String), ("Selisih", 1, CellValues.String),
-                    ("Keterangan", 1, CellValues.String)));
+                    ("Tanggal", 3, CellValues.String),
+                    ("Nama Outlet", 3, CellValues.String),
+                    ("Tipe Outlet", 3, CellValues.String),
+                    ("Pemasukan", 3, CellValues.String),
+                    ("Pengeluaran", 3, CellValues.String),
+                    ("Selisih", 3, CellValues.String),
+                    ("Keterangan", 3, CellValues.String)));
 
                 double subIncome = 0, subExpense = 0, subBalance = 0;
                 double grandIncome = 0, grandExpense = 0, grandBalance = 0;
                 int? currentType = null;
 
                 string commandText = """
-            SELECT ds.[date], o.[name], CASE WHEN o.[type] = 0 THEN 'Internal' ELSE 'Mitra' END, dsi.income, dsi.expense, dsi.income - dsi.expense, 
-            dsi.notes, o.[type] 
-            FROM dailySaleItems AS dsi 
-            INNER JOIN outlets AS o ON dsi.outlet = o.id
-            INNER JOIN dailySales AS ds ON dsi.dailySale = ds.id
-            WHERE ds.[date] BETWEEN @from AND @to AND o.deleted = 0
-            ORDER BY o.[type], ds.[date]
-            """;
+                    SELECT ds.[date], o.[name], CASE WHEN o.[type] = 0 THEN 'Internal' ELSE 'Mitra' END AS outletType,
+                    dsi.income, ISNULL(cf.debt, 0) AS expense, dsi.income - ISNULL(cf.debt, 0) AS balance, dsi.notes, o.[type]
+                    FROM dailySaleItems AS dsi 
+                    INNER JOIN outlets AS o ON dsi.outlet = o.id
+                    INNER JOIN dailySales AS ds ON dsi.dailySale = ds.id
+                    LEFT JOIN cashflows AS cf ON ds.cashOut = cf.id AND o.[type] = 0
+                    WHERE  o.deleted = 0 AND ds.[date] BETWEEN @from AND @to
+                    ORDER BY o.[type], ds.[date]
+                    """;
 
                 SqlParameter[] parameters = new[]
                 {
-            new SqlParameter("@from",  period.From),
-            new SqlParameter("@to", period.To )
-        };
+                    new SqlParameter("@from",  period.From),
+                    new SqlParameter("@to", period.To )
+                };
 
                 await db.ExecuteReaderAsync(async reader =>
                 {
@@ -296,7 +390,7 @@ DELETE FROM dailySales WHERE id=@id;";
                         var income = reader.GetDouble(3);
                         var expense = reader.GetDouble(4);
                         var balance = reader.GetDouble(5);
-                        var notes = reader.IsDBNull(6) ? "" : reader.GetString(6);
+                        var notes = reader.GetString(6);
                         var outletType = reader.GetInt32(7);
 
                         if (currentType != outletType)
@@ -313,9 +407,9 @@ DELETE FROM dailySales WHERE id=@id;";
                             (date.ToString("dd/MM/yyyy"), 0, CellValues.String),
                             (outletName, 0, CellValues.String),
                             (outletTypeStr, 0, CellValues.String),
-                            (income, 4, CellValues.Number),
-                            (expense, 4, CellValues.Number),
-                            (balance, 4, CellValues.Number),
+                            (income, 8, CellValues.Number),
+                            (expense, 8, CellValues.Number),
+                            (balance, 8, CellValues.Number),
                             (notes, 0, CellValues.String)));
 
                         subIncome += income;
@@ -334,15 +428,68 @@ DELETE FROM dailySales WHERE id=@id;";
 
                     rowIndex++;
                     sheetData.Append(ExcelHelper.CreateRow(rowIndex++,
-                        ("GRAND TOTAL", 3, CellValues.String),
-                        ("", 3, CellValues.String),
-                        ("", 3, CellValues.String),
-                        (grandIncome, 7, CellValues.Number),
-                        (grandExpense, 7, CellValues.Number),
-                        (grandBalance, 7, CellValues.Number),
-                        ("", 3, CellValues.String)));
+                        ("GRAND TOTAL", 10, CellValues.String),
+                        ("", 10, CellValues.String),
+                        ("", 10, CellValues.String),
+                        (grandIncome, 9, CellValues.Number),
+                        (grandExpense, 9, CellValues.Number),
+                        (grandBalance, 9, CellValues.Number),
+                        ("", 10, CellValues.String)));
                 }, commandText, parameters);
+
+                rowIndex++;
+
+                var worksheetPart2 = workbookPart.AddNewPart<WorksheetPart>();
+                var sheetData2 = new SheetData();
+                worksheetPart2.Worksheet = new Worksheet(sheetData2);
+
+                sheets.Append(new Sheet
+                {
+                    Id = workbookPart.GetIdOfPart(worksheetPart2),
+                    SheetId = 2,
+                    Name = "Pengeluaran"
+                });
+                uint rowIndex2 = 1;
+                sheetData2.Append(ExcelHelper.CreateRow(rowIndex2++,
+                    ("Tanggal", 3, CellValues.String),
+                    ("Kategori", 3, CellValues.String),
+                    ("Nilai", 3, CellValues.String)));
+
+                commandText = """
+                    SELECT ds.[date], ct.[name] AS [Kategori], de.costAmount AS amount
+                    FROM dailyExpenses AS de 
+                    INNER JOIN costTypes AS ct ON de.costType = ct.id
+                    INNER JOIN dailySales AS ds ON de.dailySale = ds.id
+                    WHERE ds.[date] BETWEEN @start AND @end
+                    ORDER BY ds.[date]
+                    """;
+                var pParam = new SqlParameter[]
+                {
+                    new SqlParameter("@start", period.From),
+                    new SqlParameter("@end", period.To)
+                };
+                double eTotal = 0;
+                await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
+                {                    
+                    while (await reader.ReadAsync())
+                    {
+                        var edate = reader.GetDateTime(0);
+                        var eName = reader.GetString(1);
+                        var eAmount = reader.GetDouble(2);
+                        sheetData2.Append(ExcelHelper.CreateRow(rowIndex2++,
+                            (edate.ToString("dd/MM/yyyy"), 0, CellValues.String),
+                            (eName, 0, CellValues.String),
+                            (eAmount, 4, CellValues.Number)));
+                        eTotal += eAmount;
+                    }
+                    sheetData2.Append(ExcelHelper.CreateRow(rowIndex2++,
+                            ("Total Pengeluaran", 3, CellValues.String),
+                            ("", 3, CellValues.String),
+                            (eTotal, 7, CellValues.Number)));
+
+                }, commandText, pParam);
             }
+
 
             stream.Position = 0;
             var data = stream.ToArray();
@@ -351,6 +498,23 @@ DELETE FROM dailySales WHERE id=@id;";
                 data,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             );
+        }
+        internal static async Task<IResult> GetExpenseCategories(DbClient db)
+        {
+            var data = Array.Empty<byte>();
+            using (BinaryBuilder builder = new BinaryBuilder())
+            {
+                await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        builder.WriteInt32(reader.GetInt32(0));
+                        builder.WriteString(reader.GetString(1));
+                    }
+                    data = builder.ToArray();
+                }, "SELECT id, [name] FROM costTypes WHERE [type]=1 AND deleted = 0");
+            }
+            return Results.File(data, "application/octet-stream");
         }
     }
 }

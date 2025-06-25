@@ -73,32 +73,76 @@ namespace Alaska.Data
         public static void AddStyles(WorkbookPart workbookPart)
         {
             var stylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
+
+            // Tambahkan numbering format custom
+            var numberingFormats = new NumberingFormats();
+            var thousandFormat = new NumberingFormat
+            {
+                NumberFormatId = 164, // ID >= 164 untuk format kustom
+                FormatCode = StringValue.FromString("#,##0")
+            };
+            numberingFormats.Append(thousandFormat);
+
             stylesPart.Stylesheet = new Stylesheet
             {
+                NumberingFormats = numberingFormats,
+
                 Fonts = new Fonts(
                     new Font(),
                     new Font(new Bold())
                 ),
+
                 Fills = new Fills(
                     new Fill(new PatternFill { PatternType = PatternValues.None }),
                     new Fill(new PatternFill { PatternType = PatternValues.Gray125 }),
-                    new Fill(new PatternFill(new ForegroundColor { Rgb = HexBinaryValue.FromString("F0F8FF") }) { PatternType = PatternValues.Solid }),
-                    new Fill(new PatternFill(new ForegroundColor { Rgb = HexBinaryValue.FromString("C0C0C0") }) { PatternType = PatternValues.Solid })
+                    new Fill(new PatternFill(new ForegroundColor { Rgb = HexBinaryValue.FromString("E6E6FA") }) { PatternType = PatternValues.Solid }),
+                    new Fill(new PatternFill(new ForegroundColor { Rgb = HexBinaryValue.FromString("4682B4") }) { PatternType = PatternValues.Solid })
                 ),
+
                 Borders = new Borders(new Border()),
+
                 CellFormats = new CellFormats(
-                    new CellFormat(),
-                    new CellFormat { FontId = 1, ApplyFont = true },
-                    new CellFormat { FillId = 2, FontId = 1, ApplyFill = true, ApplyFont = true },
-                    new CellFormat { FillId = 3, FontId = 1, ApplyFill = true, ApplyFont = true },
-                    new CellFormat { Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, ApplyAlignment = true },
-                    new CellFormat { Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, FontId = 1, ApplyAlignment = true, ApplyFont = true },
-                    new CellFormat { FillId = 2, FontId = 1, Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, ApplyAlignment = true, ApplyFont = true, ApplyFill = true },
-                    new CellFormat { FillId = 3, FontId = 1, Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, ApplyAlignment = true, ApplyFont = true, ApplyFill = true }
+                    new CellFormat(), // index 0
+                    new CellFormat { FontId = 1, ApplyFont = true }, // index 1
+                    new CellFormat { FillId = 2, FontId = 1, ApplyFill = true, ApplyFont = true }, // index 2
+                    new CellFormat { FillId = 3, FontId = 1, ApplyFill = true, ApplyFont = true }, // index 3
+                    new CellFormat { Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, ApplyAlignment = true }, // index 4
+                    new CellFormat { Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, FontId = 1, ApplyAlignment = true, ApplyFont = true }, // index 5
+                    new CellFormat { FillId = 2, FontId = 1, Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, ApplyAlignment = true, ApplyFont = true, ApplyFill = true }, // index 6
+                    new CellFormat { FillId = 3, FontId = 1, Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right }, ApplyAlignment = true, ApplyFont = true, ApplyFill = true }, // index 7
+
+                    // index 8 – format angka ribuan
+                    new CellFormat
+                    {
+                        NumberFormatId = 164,
+                        ApplyNumberFormat = true,
+                        Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right },
+                        ApplyAlignment = true
+                    },
+                    new CellFormat
+                    {
+                        FontId = 1,
+                        NumberFormatId = 164,
+                        ApplyFont = true,
+                        ApplyNumberFormat = true,
+                        Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right },
+                        ApplyAlignment = true,
+                        ApplyFill = true,
+                        FillId = 2
+                    },
+                    new CellFormat
+                    {
+                        FontId = 1,
+                        ApplyFont = true,
+                        ApplyFill = true,
+                        FillId = 2
+                    }
                 )
             };
+
             stylesPart.Stylesheet.Save();
         }
+
 
         public static Row CreateRow(uint index, params (string text, uint style)[] cells)
         {
@@ -111,13 +155,13 @@ namespace Alaska.Data
         public static Row CreateSubtotalRow(string subtotalName, uint index, double income, double expense, double balance)
         {
             return CreateRow(index,
-                            (subtotalName, 3, CellValues.String),
-                            ("", 3, CellValues.String),
-                            ("", 3, CellValues.String),
-                            (income, 7, CellValues.Number),
-                            (expense, 7, CellValues.Number),
-                            (balance, 7, CellValues.Number),
-                            ("", 3, CellValues.String));
+                            (subtotalName, 10, CellValues.String),
+                            ("", 10, CellValues.String),
+                            ("", 10, CellValues.String),
+                            (income, 9, CellValues.Number),
+                            (expense, 9, CellValues.Number),
+                            (balance, 9, CellValues.Number),
+                            ("", 10, CellValues.String));
         }
 
         private static Cell CreateCell(string value, uint styleIndex)
@@ -154,5 +198,21 @@ namespace Alaska.Data
 
             return row;
         }
+        public static Columns CreateColumnWidths(params double[] widths)
+        {
+            var cols = new Columns();
+            for (uint i = 0; i < widths.Length; i++)
+            {
+                cols.Append(new Column
+                {
+                    Min = i + 1,
+                    Max = i + 1,
+                    Width = widths[i],
+                    CustomWidth = true
+                });
+            }
+            return cols;
+        }
+
     }
 }

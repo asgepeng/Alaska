@@ -44,6 +44,7 @@ namespace WinformApp.Forms
         private void Calculate()
         {
             if (this.DailySale is null) return;
+
             double balance = 0;
             var (totalIncome, totalExpense) = this.DailySale.Calculate();
             balance = totalIncome - totalExpense;
@@ -103,10 +104,7 @@ namespace WinformApp.Forms
 
         internal void SetExpense(double value)
         {
-            if (DailySale is null) return;
-
-            DailySale.TotalExpense = value;
-            this.expenseLabel.Text = DailySale.TotalExpense.ToString("N0");
+            Calculate();
         }
 
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -116,7 +114,10 @@ namespace WinformApp.Forms
 
         private void HandleButtonExpenseClicked(object sender, EventArgs e)
         {
+            if (this.DailySale is null) return;
+
             var Form = new EntryExpenseForm();
+            Form.Sale = this.DailySale;
             Form.eForm = this;
             Form.ShowDialog();
         }
