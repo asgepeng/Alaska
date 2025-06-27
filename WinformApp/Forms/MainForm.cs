@@ -25,6 +25,7 @@ namespace WinformApp
             saleButton.Tag = ListingType.Sales;
             cashflowButton.Tag = ListingType.CashFlow;
             costTypeButton.Tag = ListingType.CostType;
+
         }
         private void SetEnableControls(bool enable, bool usePeriod)
         {
@@ -40,8 +41,10 @@ namespace WinformApp
         private void OpenLoginDialog(object sender, EventArgs e)
         {
             var hostSettingPath = AppContext.BaseDirectory + "host.ini";
+            var useHostIni = false;
             if (File.Exists(hostSettingPath))
             {
+                useHostIni = true;
                 My.Application.ApiUrl = File.ReadAllText(hostSettingPath).Trim();
             }
             LoginForm dialog = new LoginForm();
@@ -49,7 +52,8 @@ namespace WinformApp
             {
                 string username = My.Application.User != null ? My.Application.User.Name : "-";
                 this.userLoginName.Text = username;
-                this.m_Hostname.Text = "Host: " + NetworkHelper.GetIPV4Address() + ":5005";
+                if (useHostIni) this.m_Hostname.Text = "Host: " + My.Application.ApiUrl;
+                else this.m_Hostname.Text = "Host: " + NetworkHelper.GetIPV4Address() + ":5005";
                 this.WindowState = FormWindowState.Maximized;
             }
             else

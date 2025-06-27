@@ -64,11 +64,12 @@ namespace WinformApp.Data
             AddColumn("balance", typeof(double));
             AddColumn("notes", typeof(string));
             AddColumn("creator", typeof(string));
+            AddColumn("createdDate", typeof(DateTime));
             while (Read())
             {
                 var values = new object[]
                 {
-                    ReadInt32(), ReadDateTime(), ReadDouble(), ReadDouble(), ReadDouble(), ReadString(), ReadString()
+                    ReadInt32(), ReadDateTime(), ReadDouble(), ReadDouble(), ReadDouble(), ReadString(), ReadString(), ReadDateTime()
                 };
                 AddRow(values);
             }

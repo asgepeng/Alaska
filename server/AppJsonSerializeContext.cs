@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Alaska;
 
+[JsonSerializable(typeof(CashFlowItem))]
 [JsonSerializable(typeof(CostCategory))]
 [JsonSerializable(typeof(ExportProfile))]
 [JsonSerializable(typeof(DailySale))]

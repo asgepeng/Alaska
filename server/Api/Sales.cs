@@ -28,6 +28,7 @@ namespace server.Api
             app.MapPost("/trans/sales-check", CheckIfExistAsync).RequireAuthorization();
             app.MapPost("/trans/sales/export", ExportSalesReport).RequireAuthorization();
             app.MapGet("/trans/sales/expense-categories", GetExpenseCategories).RequireAuthorization();
+            app.MapGet("/trans/sales/income-categories", GetIncomeCategories).RequireAuthorization();
         }
         internal static async Task<IResult> GetDataTableAsync(Period periode, DbClient db)
         {
@@ -513,6 +514,23 @@ DELETE FROM dailySales WHERE id=@id;";
                     }
                     data = builder.ToArray();
                 }, "SELECT id, [name] FROM costTypes WHERE [type]=1 AND deleted = 0");
+            }
+            return Results.File(data, "application/octet-stream");
+        }
+        internal static async Task<IResult> GetIncomeCategories(DbClient db)
+        {
+            var data = Array.Empty<byte>();
+            using (BinaryBuilder builder = new BinaryBuilder())
+            {
+                await db.ExecuteReaderAsync(async (SqlDataReader reader) =>
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        builder.WriteInt32(reader.GetInt32(0));
+                        builder.WriteString(reader.GetString(1));
+                    }
+                    data = builder.ToArray();
+                }, "SELECT id, [name] FROM costTypes WHERE [type]=0 AND deleted = 0");
             }
             return Results.File(data, "application/octet-stream");
         }

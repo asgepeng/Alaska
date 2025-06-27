@@ -49,11 +49,11 @@ namespace WinformApp.Forms
                     this.Text = "Daftar Waiter";
                     break;
                 case ListingType.Sales:
-                    this.Text = "Penjualan";
-                    this.panel1.BackColor = Color.Green;
+                    this.Text = "Penjualan Tea && Chocolate";
+                    this.panel1.BackColor = Color.SeaGreen;
                     break;
                 case ListingType.CashFlow:
-                    this.Text = "Laporan Arus Kas";
+                    this.Text = "Kas Masuk && Keluar";
                     break;
                 case ListingType.CostType:
                     this.Text = "Kategori Biaya";
@@ -167,10 +167,10 @@ namespace WinformApp.Forms
                     GridHelpers.InitializeDataGridColumns(this.grid, new DataTableColumnInfo[]
                     {
                         new DataTableColumnInfo("Kode", "id", 60, DataGridViewContentAlignment.MiddleCenter, "000000"),
-                        new DataTableColumnInfo("Tanggal", "date", 80, DataGridViewContentAlignment.MiddleCenter, "dd-MM-yyyy"),
-                        new DataTableColumnInfo("Pemasukan", "income", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
-                        new DataTableColumnInfo("Pengeluaran", "expense", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
-                        new DataTableColumnInfo("Selisih", "balance", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Tanggal", "date", 100, DataGridViewContentAlignment.MiddleCenter, "dd-MM-yyyy"),
+                        new DataTableColumnInfo("Pemasukan", "income", 120, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Pengeluaran", "expense", 120, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Selisih", "balance", 120, DataGridViewContentAlignment.MiddleRight, "N0"),
                         new DataTableColumnInfo("Dibuat oleh", "creator", 150),
                         new DataTableColumnInfo("Tgl. dibuat", "createdDate", 120, DataGridViewContentAlignment.MiddleRight, "dd-MM-yyyy HH:mm")
                     }, this.BindingSource);
@@ -179,11 +179,12 @@ namespace WinformApp.Forms
                     GridHelpers.InitializeDataGridColumns(this.grid, new DataTableColumnInfo[]
                     {
                         new DataTableColumnInfo("Tanggal", "date", 120, DataGridViewContentAlignment.MiddleCenter, "dd-MM-yyyy HH:mm"),
-                        new DataTableColumnInfo("Credit", "credit", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
-                        new DataTableColumnInfo("Debt", "debt", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
-                        new DataTableColumnInfo("Saldo", "balance", 100, DataGridViewContentAlignment.MiddleRight, "N0"),
-                        new DataTableColumnInfo("Keterangan", "notes", 350),
+                        new DataTableColumnInfo("Credit", "credit", 120, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Debt", "debt", 120, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Saldo", "balance", 120, DataGridViewContentAlignment.MiddleRight, "N0"),
+                        new DataTableColumnInfo("Keterangan", "notes", 250),
                         new DataTableColumnInfo("Dibuat oleh", "creator", 150),
+                        new DataTableColumnInfo("Dibuat tanggal", "createdDate", 120, DataGridViewContentAlignment.MiddleRight, "dd-MM-yyyy HH:mm")
                     }, this.BindingSource);
                     foreach (DataGridViewColumn column in this.grid.Columns)
                     {
@@ -225,6 +226,11 @@ namespace WinformApp.Forms
         }
         internal async Task Delete()
         {
+            if (Type == ListingType.CashFlow)
+            {
+                MessageBox.Show("Record ini tidak bisa dihapus", "Tidak diijinkan", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
             if (this.BindingSource.Current != null)
             {
                 if (MessageBox.Show("Yakin ingin menghapus record secara permanen dari database?", "Hapus", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -249,6 +255,8 @@ namespace WinformApp.Forms
         {
             if (e.RowIndex >= 0)
             {
+                if (Type == ListingType.CashFlow) return;
+
                 var form = GetFormByType();
                 if (form is null) return;
 

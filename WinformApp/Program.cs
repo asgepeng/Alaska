@@ -16,10 +16,18 @@ namespace Alaska
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 
+    [JsonSerializable(typeof(CashFlowItem))]
     [JsonSerializable(typeof(CostCategory))]
     [JsonSerializable(typeof(ExportProfile))]
     [JsonSerializable(typeof(ResetPasswordModel))]

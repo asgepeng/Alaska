@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using Microsoft.AspNetCore.Http.HttpResults;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using AlaskaLib.Models;
 
 namespace server.Api
 {
@@ -22,7 +23,47 @@ namespace server.Api
         internal static void MapCashflowEndPoints(this WebApplication app)
         {
             app.MapPost("/reports/cashflows", GetAllAsync).RequireAuthorization();
+            app.MapPost("/reports/cashflows/create", CreateAsync).RequireAuthorization();
             app.MapPost("/reports/cashflows/export", DownloadExcelAsync).RequireAuthorization();
+        }
+        internal static async Task<IResult>  CreateAsync(CashFlowItem model, HttpContext context, DbClient db)
+        {
+            if (model.Direction == 0)
+            {
+                var commandText = """
+                    INSERT INTO cashflows ([date], [credit], [notes], [creator])
+                    VALUES (@date, @amount, 'Pemasukan', @creator);
+                    INSERT INTO incomes ([date], [cashIn], [notes], [creator])
+                    VALUES (@date, SCOPE_IDENTITY(), @notes, @creator);
+                    """;
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@date", model.Date),
+                    new SqlParameter("@amount", model.Amount),
+                    new SqlParameter("@creator", AppHelpers.GetUserID(context)),
+                    new SqlParameter("@notes", model.Notes)
+                };
+                var success = await db.ExecuteNonQueryAsync(commandText, parameters);
+                return Results.Ok(success);
+            }
+            else
+            {
+                var commandText = """
+                    INSERT INTO cashflows ([date], [debt], [notes], [creator])
+                    VALUES (@date, @amount, 'Pengeluaran', @creator);
+                    INSERT INTO expenses ([date], [cashoutId], [notes], [creator])
+                    VALUES (@date, SCOPE_IDENTITY(), @notes, @creator);
+                    """;
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@date", model.Date),
+                    new SqlParameter("@amount", model.Amount),
+                    new SqlParameter("@creator", AppHelpers.GetUserID(context)),
+                    new SqlParameter("@notes", model.Notes)
+                };
+                var success = await db.ExecuteNonQueryAsync(commandText, parameters);
+                return Results.Ok(success);
+            }
         }
         internal static async Task<IResult> DownloadExcelAsync(Period period, DbClient db)
         {
@@ -121,7 +162,7 @@ namespace server.Api
         internal static async Task<IResult> GetAllAsync(Period period, HttpContext context, DbClient db)
         {
             var commandTex = """
-                SELECT c.id, c.[date], c.debt, c.credit, c.notes, u.[name] AS creator
+                SELECT c.id, c.[date], c.debt, c.credit, c.notes, u.[name] AS creator, c.createdDate
                 FROM cashflows AS c
                 INNER JOIN users AS u ON c.creator = u.id
                 WHERE c.[date] BETWEEN @start AND @end
@@ -145,6 +186,7 @@ namespace server.Api
                         builder.WriteDouble(startBalance);
                         builder.WriteString(reader.GetString(4));
                         builder.WriteString(reader.GetString(5));
+                        builder.WriteDateTime(reader.GetDateTime(6));
                     }
                     data = builder.ToArray();
                 }, commandTex, new SqlParameter("@start", period.From), new SqlParameter("@end", period.To));

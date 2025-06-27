@@ -47,7 +47,6 @@
             expenseButton = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             saleButton = new ToolStripMenuItem();
-            laporanToolStripMenuItem = new ToolStripMenuItem();
             cashflowButton = new ToolStripMenuItem();
             toolsToolStripMenuItem1 = new ToolStripMenuItem();
             goToHomepageToolStripMenuItem = new ToolStripMenuItem();
@@ -67,8 +66,8 @@
             sparator1 = new ToolStripSeparator();
             firstRowButton = new ToolStripButton();
             previousRowButton = new ToolStripButton();
-            sparator2 = new ToolStripSeparator();
             positionTextBox = new ToolStripTextBox();
+            sparator2 = new ToolStripSeparator();
             nextButton = new ToolStripButton();
             lastRowButton = new ToolStripButton();
             sparator3 = new ToolStripSeparator();
@@ -83,10 +82,11 @@
             // menuStrip1
             // 
             menuStrip1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, toolsToolStripMenuItem, laporanToolStripMenuItem, toolsToolStripMenuItem1, helpToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, toolsToolStripMenuItem, toolsToolStripMenuItem1, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1057, 25);
+            menuStrip1.Padding = new Padding(6, 4, 0, 4);
+            menuStrip1.Size = new Size(1057, 29);
             menuStrip1.TabIndex = 1;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -208,30 +208,25 @@
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saleButton });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saleButton, cashflowButton });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new Size(73, 21);
             toolsToolStripMenuItem.Text = "&Transaksi";
             // 
             // saleButton
             // 
+            saleButton.Image = Properties.Resources.iincome;
             saleButton.Name = "saleButton";
             saleButton.Size = new Size(231, 22);
             saleButton.Text = "&Penjualan Tea && Chocolate";
             saleButton.Click += OpenListingForm;
             // 
-            // laporanToolStripMenuItem
-            // 
-            laporanToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { cashflowButton });
-            laporanToolStripMenuItem.Name = "laporanToolStripMenuItem";
-            laporanToolStripMenuItem.Size = new Size(68, 21);
-            laporanToolStripMenuItem.Text = "Laporan";
-            // 
             // cashflowButton
             // 
+            cashflowButton.Image = Properties.Resources.isale;
             cashflowButton.Name = "cashflowButton";
-            cashflowButton.Size = new Size(179, 22);
-            cashflowButton.Text = "Laporan Arus Kas";
+            cashflowButton.Size = new Size(231, 22);
+            cashflowButton.Text = "Kas Keluar && Masuk";
             cashflowButton.Click += OpenListingForm;
             // 
             // toolsToolStripMenuItem1
@@ -271,6 +266,7 @@
             // 
             // m_StatusStrip
             // 
+            m_StatusStrip.BackColor = SystemColors.ControlDarkDark;
             m_StatusStrip.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             m_StatusStrip.Items.AddRange(new ToolStripItem[] { userLoginName, toolStripStatusLabel1, m_Hostname });
             m_StatusStrip.Location = new Point(0, 428);
@@ -281,13 +277,16 @@
             // 
             // userLoginName
             // 
-            userLoginName.Image = Properties.Resources.icustomer;
+            userLoginName.BackColor = Color.DimGray;
+            userLoginName.ForeColor = Color.White;
+            userLoginName.Image = Properties.Resources.usr;
             userLoginName.Name = "userLoginName";
             userLoginName.Size = new Size(147, 17);
             userLoginName.Text = "toolStripStatusLabel1";
             // 
             // toolStripStatusLabel1
             // 
+            toolStripStatusLabel1.ForeColor = Color.White;
             toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             toolStripStatusLabel1.Size = new Size(857, 17);
             toolStripStatusLabel1.Spring = true;
@@ -295,6 +294,7 @@
             // 
             // m_Hostname
             // 
+            m_Hostname.ForeColor = Color.White;
             m_Hostname.Name = "m_Hostname";
             m_Hostname.Size = new Size(38, 17);
             m_Hostname.Text = "Host:";
@@ -302,27 +302,28 @@
             // navigator
             // 
             navigator.AddNewItem = null;
-            navigator.BackColor = SystemColors.ButtonFace;
             navigator.CountItem = countLabel;
             navigator.DeleteItem = null;
+            navigator.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            navigator.GripStyle = ToolStripGripStyle.Hidden;
             navigator.ImageScalingSize = new Size(24, 24);
-            navigator.Items.AddRange(new ToolStripItem[] { refreshButton, sparator0, addButton, deleteButton, sparator1, firstRowButton, previousRowButton, sparator2, positionTextBox, countLabel, nextButton, lastRowButton, sparator3, downloadButton, childFormLabel });
-            navigator.Location = new Point(0, 25);
+            navigator.Items.AddRange(new ToolStripItem[] { refreshButton, sparator0, addButton, deleteButton, sparator1, firstRowButton, previousRowButton, positionTextBox, countLabel, sparator2, nextButton, lastRowButton, sparator3, downloadButton, childFormLabel });
+            navigator.Location = new Point(0, 29);
             navigator.MoveFirstItem = firstRowButton;
-            navigator.MoveLastItem = previousRowButton;
+            navigator.MoveLastItem = lastRowButton;
             navigator.MoveNextItem = nextButton;
-            navigator.MovePreviousItem = lastRowButton;
+            navigator.MovePreviousItem = previousRowButton;
             navigator.Name = "navigator";
-            navigator.Padding = new Padding(3);
+            navigator.Padding = new Padding(6);
             navigator.PositionItem = positionTextBox;
-            navigator.Size = new Size(1057, 37);
+            navigator.Size = new Size(1057, 43);
             navigator.TabIndex = 5;
             navigator.Text = "toolStrip1";
             // 
             // countLabel
             // 
             countLabel.Name = "countLabel";
-            countLabel.Size = new Size(35, 28);
+            countLabel.Size = new Size(39, 28);
             countLabel.Text = "of {0}";
             // 
             // refreshButton
@@ -331,7 +332,7 @@
             refreshButton.Image = Properties.Resources.reload;
             refreshButton.ImageTransparentColor = Color.Magenta;
             refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(74, 28);
+            refreshButton.Size = new Size(80, 28);
             refreshButton.Text = "Refresh";
             refreshButton.Click += RefreshListing;
             // 
@@ -359,7 +360,7 @@
             deleteButton.ImageTransparentColor = Color.Magenta;
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(28, 28);
-            deleteButton.Text = "&Open";
+            deleteButton.Text = "Delete";
             deleteButton.Click += HandleDeleteRecord;
             // 
             // sparator1
@@ -374,7 +375,7 @@
             firstRowButton.ImageTransparentColor = Color.Magenta;
             firstRowButton.Name = "firstRowButton";
             firstRowButton.Size = new Size(28, 28);
-            firstRowButton.Text = "&Save";
+            firstRowButton.Text = "Move First";
             // 
             // previousRowButton
             // 
@@ -383,12 +384,7 @@
             previousRowButton.ImageTransparentColor = Color.Magenta;
             previousRowButton.Name = "previousRowButton";
             previousRowButton.Size = new Size(28, 28);
-            previousRowButton.Text = "&Print";
-            // 
-            // sparator2
-            // 
-            sparator2.Name = "sparator2";
-            sparator2.Size = new Size(6, 31);
+            previousRowButton.Text = "Move Previous";
             // 
             // positionTextBox
             // 
@@ -397,6 +393,11 @@
             positionTextBox.Size = new Size(60, 31);
             positionTextBox.Text = "0";
             // 
+            // sparator2
+            // 
+            sparator2.Name = "sparator2";
+            sparator2.Size = new Size(6, 31);
+            // 
             // nextButton
             // 
             nextButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -404,7 +405,7 @@
             nextButton.ImageTransparentColor = Color.Magenta;
             nextButton.Name = "nextButton";
             nextButton.Size = new Size(28, 28);
-            nextButton.Text = "C&ut";
+            nextButton.Text = "Move Next";
             // 
             // lastRowButton
             // 
@@ -413,7 +414,7 @@
             lastRowButton.ImageTransparentColor = Color.Magenta;
             lastRowButton.Name = "lastRowButton";
             lastRowButton.Size = new Size(28, 28);
-            lastRowButton.Text = "&Copy";
+            lastRowButton.Text = "Move Last";
             // 
             // sparator3
             // 
@@ -432,7 +433,7 @@
             // childFormLabel
             // 
             childFormLabel.Alignment = ToolStripItemAlignment.Right;
-            childFormLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            childFormLabel.Font = new Font("Tahoma", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             childFormLabel.ForeColor = SystemColors.HotTrack;
             childFormLabel.Margin = new Padding(0, 1, 6, 2);
             childFormLabel.Name = "childFormLabel";
@@ -490,8 +491,6 @@
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel m_Hostname;
         private ToolStripMenuItem publishCloudflaredToolStripMenuItem;
-        private ToolStripMenuItem laporanToolStripMenuItem;
-        private ToolStripMenuItem cashflowButton;
         private BindingNavigator navigator;
         private ToolStripButton addButton;
         private ToolStripButton deleteButton;
@@ -510,5 +509,6 @@
         private ToolStripMenuItem ubahPasswordToolStripMenuItem;
         private ToolStripSeparator sparator0;
         private ToolStripMenuItem costTypeButton;
+        private ToolStripMenuItem cashflowButton;
     }
 }

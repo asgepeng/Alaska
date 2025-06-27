@@ -121,6 +121,8 @@ namespace Alaska.Data
                 }
                 catch (Exception ex)
                 {
+                    var logfile = AppContext.BaseDirectory + "error.log";
+                    File.WriteAllText(logfile, ex.ToString());
                     return false;
                 }
                 finally

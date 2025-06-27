@@ -154,3 +154,13 @@ CREATE TABLE dailyExpenses
 	[costAmount] FLOAT NOT NULL CONSTRAINT df_dailyExpense_costAmount DEFAULT(0),
 	CONSTRAINT pk_dailyExpenses PRIMARY KEY CLUSTERED (id)
 );
+CREATE TABLE incomes
+(
+	id INT NOT NULL IDENTITY(1,1),
+	[date] DATETIME NOT NULL CONSTRAINT df_income_date DEFAULT(GETDATE()),
+	[cashIn] INT NOT NULL CONSTRAINT df_income_cashoutId DEFAULT(0),
+	[notes] VARCHAR(250) NOT NULL CONSTRAINT df_income_notes DEFAULT(''),
+	[creator] INT NOT NULL CONSTRAINT df_income_creator DEFAULT(0),
+	[createdDate] DATETIME NOT NULL CONSTRAINT df_income_createdDate DEFAULT(GETDATE()),
+	CONSTRAINT pk_incomes PRIMARY KEY CLUSTERED (id)
+);

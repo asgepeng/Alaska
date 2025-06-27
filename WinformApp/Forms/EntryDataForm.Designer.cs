@@ -35,6 +35,12 @@
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             label1 = new Label();
             dataGridView1 = new DataGridView();
+            outletIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            outletNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            OutletType = new DataGridViewTextBoxColumn();
+            waiterNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            notesDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            incomeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             dailySalesItemBindingSource = new BindingSource(components);
             incomeLabel = new Label();
             expenseLabel = new Label();
@@ -49,12 +55,6 @@
             label2 = new Label();
             dateTimePicker1 = new DateTimePicker();
             button3 = new Button();
-            outletIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            outletNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            OutletType = new DataGridViewTextBoxColumn();
-            waiterNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            notesDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            incomeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dailySalesItemBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -96,163 +96,6 @@
             dataGridView1.CellEndEdit += HandleDataGridCellEndEdit;
             dataGridView1.DataBindingComplete += HandleDataBindingComplete;
             dataGridView1.DataError += dataGridView1_DataError;
-            // 
-            // dailySalesItemBindingSource
-            // 
-            dailySalesItemBindingSource.DataSource = typeof(AlaskaLib.Models.DailySalesItem);
-            // 
-            // incomeLabel
-            // 
-            incomeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            incomeLabel.BorderStyle = BorderStyle.FixedSingle;
-            incomeLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            incomeLabel.ForeColor = SystemColors.ControlText;
-            incomeLabel.Location = new Point(972, 449);
-            incomeLabel.Name = "incomeLabel";
-            incomeLabel.Size = new Size(200, 32);
-            incomeLabel.TabIndex = 2;
-            incomeLabel.Text = "0";
-            incomeLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // expenseLabel
-            // 
-            expenseLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            expenseLabel.BorderStyle = BorderStyle.FixedSingle;
-            expenseLabel.Cursor = Cursors.Hand;
-            expenseLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            expenseLabel.ForeColor = SystemColors.ControlText;
-            expenseLabel.Location = new Point(1005, 482);
-            expenseLabel.Name = "expenseLabel";
-            expenseLabel.Size = new Size(167, 32);
-            expenseLabel.TabIndex = 3;
-            expenseLabel.Text = "0";
-            expenseLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // balanceLabel
-            // 
-            balanceLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            balanceLabel.BorderStyle = BorderStyle.FixedSingle;
-            balanceLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            balanceLabel.Location = new Point(972, 515);
-            balanceLabel.Name = "balanceLabel";
-            balanceLabel.Size = new Size(200, 32);
-            balanceLabel.TabIndex = 4;
-            balanceLabel.Text = "0";
-            balanceLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // label5
-            // 
-            label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label5.AutoSize = true;
-            label5.Location = new Point(893, 454);
-            label5.Name = "label5";
-            label5.Size = new Size(73, 17);
-            label5.TabIndex = 5;
-            label5.Text = "Pemasukan";
-            // 
-            // label6
-            // 
-            label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label6.AutoSize = true;
-            label6.Location = new Point(886, 490);
-            label6.Name = "label6";
-            label6.Size = new Size(80, 17);
-            label6.TabIndex = 6;
-            label6.Text = "Pengeluaran";
-            // 
-            // label7
-            // 
-            label7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label7.AutoSize = true;
-            label7.Location = new Point(922, 523);
-            label7.Name = "label7";
-            label7.Size = new Size(44, 17);
-            label7.TabIndex = 7;
-            label7.Text = "Selisih";
-            // 
-            // button1
-            // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button1.BackColor = SystemColors.HotTrack;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(1056, 567);
-            button1.Name = "button1";
-            button1.Size = new Size(116, 32);
-            button1.TabIndex = 9;
-            button1.Text = "Simpan";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += HandleSaveButtonClicked;
-            // 
-            // button2
-            // 
-            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button2.BackColor = Color.Red;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(934, 567);
-            button2.Name = "button2";
-            button2.Size = new Size(116, 32);
-            button2.TabIndex = 10;
-            button2.Text = "Tutup";
-            button2.UseVisualStyleBackColor = false;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Image = Properties.Resources.transparentlogo;
-            pictureBox1.Location = new Point(976, 12);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(196, 77);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 11;
-            pictureBox1.TabStop = false;
-            // 
-            // notesTextBox
-            // 
-            notesTextBox.Location = new Point(105, 43);
-            notesTextBox.Multiline = true;
-            notesTextBox.Name = "notesTextBox";
-            notesTextBox.Size = new Size(300, 46);
-            notesTextBox.TabIndex = 13;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(12, 46);
-            label2.Name = "label2";
-            label2.Size = new Size(78, 17);
-            label2.TabIndex = 12;
-            label2.Text = "Keterangan";
-            // 
-            // dateTimePicker1
-            // 
-            dateTimePicker1.CustomFormat = "dd/MM/yyyy";
-            dateTimePicker1.Format = DateTimePickerFormat.Custom;
-            dateTimePicker1.Location = new Point(105, 12);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(90, 25);
-            dateTimePicker1.TabIndex = 14;
-            // 
-            // button3
-            // 
-            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button3.BackColor = SystemColors.HotTrack;
-            button3.FlatAppearance.BorderSize = 0;
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(972, 482);
-            button3.Name = "button3";
-            button3.Size = new Size(32, 32);
-            button3.TabIndex = 15;
-            button3.Text = "...";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += HandleButtonExpenseClicked;
             // 
             // outletIdDataGridViewTextBoxColumn
             // 
@@ -309,6 +152,164 @@
             incomeDataGridViewTextBoxColumn.HeaderText = "Pemasukan";
             incomeDataGridViewTextBoxColumn.Name = "incomeDataGridViewTextBoxColumn";
             // 
+            // dailySalesItemBindingSource
+            // 
+            dailySalesItemBindingSource.DataSource = typeof(AlaskaLib.Models.DailySalesItem);
+            // 
+            // incomeLabel
+            // 
+            incomeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            incomeLabel.BorderStyle = BorderStyle.FixedSingle;
+            incomeLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            incomeLabel.ForeColor = SystemColors.ControlText;
+            incomeLabel.Location = new Point(972, 449);
+            incomeLabel.Name = "incomeLabel";
+            incomeLabel.Size = new Size(200, 32);
+            incomeLabel.TabIndex = 2;
+            incomeLabel.Text = "0";
+            incomeLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // expenseLabel
+            // 
+            expenseLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            expenseLabel.BorderStyle = BorderStyle.FixedSingle;
+            expenseLabel.Cursor = Cursors.Hand;
+            expenseLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            expenseLabel.ForeColor = SystemColors.ControlText;
+            expenseLabel.Location = new Point(1005, 482);
+            expenseLabel.Name = "expenseLabel";
+            expenseLabel.Size = new Size(167, 32);
+            expenseLabel.TabIndex = 3;
+            expenseLabel.Text = "0";
+            expenseLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // balanceLabel
+            // 
+            balanceLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            balanceLabel.BorderStyle = BorderStyle.FixedSingle;
+            balanceLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            balanceLabel.Location = new Point(972, 515);
+            balanceLabel.Name = "balanceLabel";
+            balanceLabel.Size = new Size(200, 32);
+            balanceLabel.TabIndex = 4;
+            balanceLabel.Text = "0";
+            balanceLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label5
+            // 
+            label5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            label5.AutoSize = true;
+            label5.Location = new Point(893, 454);
+            label5.Name = "label5";
+            label5.Size = new Size(73, 17);
+            label5.TabIndex = 5;
+            label5.Text = "Pemasukan";
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Location = new Point(886, 490);
+            label6.Name = "label6";
+            label6.Size = new Size(80, 17);
+            label6.TabIndex = 6;
+            label6.Text = "Pengeluaran";
+            // 
+            // label7
+            // 
+            label7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Location = new Point(922, 523);
+            label7.Name = "label7";
+            label7.Size = new Size(44, 17);
+            label7.TabIndex = 7;
+            label7.Text = "Selisih";
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button1.BackColor = SystemColors.HotTrack;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button1.ForeColor = Color.White;
+            button1.Location = new Point(1056, 567);
+            button1.Name = "button1";
+            button1.Size = new Size(116, 32);
+            button1.TabIndex = 9;
+            button1.Text = "Simpan";
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += HandleSaveButtonClicked;
+            // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button2.BackColor = Color.Red;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button2.ForeColor = Color.White;
+            button2.Location = new Point(934, 567);
+            button2.Name = "button2";
+            button2.Size = new Size(116, 32);
+            button2.TabIndex = 10;
+            button2.Text = "Tutup";
+            button2.UseVisualStyleBackColor = false;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pictureBox1.Image = Properties.Resources.transparentlogo;
+            pictureBox1.Location = new Point(976, 12);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(196, 77);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 11;
+            pictureBox1.TabStop = false;
+            // 
+            // notesTextBox
+            // 
+            notesTextBox.Location = new Point(105, 43);
+            notesTextBox.Multiline = true;
+            notesTextBox.Name = "notesTextBox";
+            notesTextBox.Size = new Size(300, 46);
+            notesTextBox.TabIndex = 13;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(12, 46);
+            label2.Name = "label2";
+            label2.Size = new Size(78, 17);
+            label2.TabIndex = 12;
+            label2.Text = "Keterangan";
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.CustomFormat = "dd/MM/yyyy";
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            dateTimePicker1.Location = new Point(105, 12);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(90, 25);
+            dateTimePicker1.TabIndex = 14;
+            // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button3.BackColor = SystemColors.HotTrack;
+            button3.FlatAppearance.BorderSize = 0;
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button3.ForeColor = Color.White;
+            button3.Location = new Point(972, 482);
+            button3.Name = "button3";
+            button3.Size = new Size(32, 32);
+            button3.TabIndex = 15;
+            button3.Text = "...";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += HandleButtonExpenseClicked;
+            // 
             // EntryDataForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -332,7 +333,7 @@
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Name = "EntryDataForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Input Laopran Penjualan Harian";
+            Text = "Input Penjualan Harian";
             Load += HandleFormLoad;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dailySalesItemBindingSource).EndInit();

@@ -76,10 +76,10 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.transparentlogo;
-            pictureBox1.Location = new Point(12, 74);
+            pictureBox1.Location = new Point(12, 73);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(310, 96);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.Size = new Size(310, 97);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 5;
             pictureBox1.TabStop = false;
             // 
@@ -119,7 +119,7 @@
             label4.Name = "label4";
             label4.Size = new Size(310, 29);
             label4.TabIndex = 9;
-            label4.Text = "Selamat Datang";
+            label4.Text = "Selamat Datang di Aplikasi";
             label4.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // LoginForm
